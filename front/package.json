@@ -1,0 +1,22 @@
+{
+  "name": "hackatest-front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ponyportal2/HackaTest.git"
+  },
+  "author": "verdaqui",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ponyportal2/HackaTest/issues"
+  },
+  "homepage": "https://github.com/ponyportal2/HackaTest#readme",
+  "devDependencies": {
+    "electron": "^26.2.1"
+  }
+}
