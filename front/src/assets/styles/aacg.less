@@ -1,0 +1,163 @@
+/*
+	(ARGC) Any Responsive Column Grid
+	
+	Allows to create responsive column grid (Bootstrap-like)
+	with:
+	any names,
+	any count of columns ,
+	any gaps,
+	any count and names of sizes  (default sizes: xl, lg, md, sm, xs),
+	any containers sizes,
+	
+	elements without size tags (example: pos-12, works at any size but elements with size tags has priority) - Optional
+	flex-orders - Optional
+
+	Default settings creates Bootstrap grid 
+	(pos-container, pos-row, pos-xl-12, pos-offset-xl-12, pos-12, pos-offset-12, pos-order-xl-12, pos-order-12)
+
+	Just enter settings and compile LESS file
+*/
+
+/* Settings */
+@names: container, row, pos, offset, pos-order; 	
+//cotainer, row, grid element, offset element, order
+
+@columnsCount: 12; 						//Count of grid columns
+@gridGaps: 30px, 30px, 30px, 30px, 0px; 	//Gap between grid elements
+
+@triggers: 1200px, 992px, 768px, 576px;			//Minimum Widths of grid sizes
+@containerSizes: 1140px, 960px, 720px, 540px;	//Container sizes by grid sizes
+@sizesNames: xl, lg, md, sm, xs;				//Names of sizes (for example pos-xl-12)
+
+@createNoSizeElements: 1; 		
+//Set 1 to add elements without size tags (example: pos-12, pos-offset-6), that works at any size (but size tags has priority)
+@createOrders: 1;
+//Set 1 to add order styles (example: pos-order-lg-7)
+@createNoSizeOrders: 1;
+//Set 1 to add orders without size tags (example: pos-order-7), that works at any size (but size tags has priority)
+
+
+
+
+/* Some global calculations */
+@sizesCount: length(@sizesNames);
+
+@containerName: extract(@names, 1);
+@rowName: extract(@names, 2);
+@elementPrefix: extract(@names, 3);
+@offsetPrefix: extract(@names, 4);
+@orderPrefix: extract(@names, 5);
+
+/* Functions (Mixins) */
+
+//Creating media queries for sizes
+.gridElements(@sizeId, @width) when (@width >= 0) {
+	.gridElements(@sizeId, @width - 1);
+	@sizePrefix: extract(@sizesNames, @sizeId);
+	@gap:extract(@gridGaps, @sizeId);
+
+	@curName: escape("@{elementPrefix}-@{sizePrefix}-@{width}");
+	@curOffsetName: escape("@{offsetPrefix}-@{sizePrefix}-@{width}");
+
+	.@{curName} when (@width > 0) {
+		display: inline-block;
+		width: ( (100% * @width) / @columnsCount );
+
+		padding-left: ( @gap/2 );
+		padding-right: ( @gap/2 );
+	}
+	.@{curName} when (@width = 0) {
+		display: none;
+	}
+
+	.@{curOffsetName} {
+		margin-left: ( (100% * @width) / @columnsCount );
+	}
+
+	@curNSName: escape("@{elementPrefix}-@{width}");
+	.@{curNSName} when (@width > 0) {
+		padding-left: ( @gap/2 );
+		padding-right: ( @gap/2 );
+	}
+
+	@curOrderName: escape("@{orderPrefix}-@{sizePrefix}-@{width}");
+	.@{curOrderName} when (@createOrders = 1) { order: @width; }
+}
+.baseStyles(@sizeId) when ( @sizeId < @sizesCount ) {
+	.@{containerName} {
+		width: ( extract(@containerSizes, @sizeId) + extract(@gridGaps, @sizeId) );
+		margin: 0 auto;
+	}
+	.@{rowName} {
+		display: flex;
+		flex-wrap: wrap;
+
+		width: 100%;
+	}
+
+	@gap:extract(@gridGaps, @sizeId);
+}
+.baseStyles(@sizeId) when ( @sizeId = @sizesCount ) {
+	.@{containerName} {
+		width: 100vw;
+		max-width: 100%;
+	}
+	.@{rowName} {
+		display: flex;
+		flex-wrap: wrap;
+
+		width: 100%;
+	}
+}
+
+.sizesLoop(@id) when (@id = @sizesCount){	//Min size
+	.sizesLoop(@id - 1);
+	@media (max-width: ( extract(@triggers, @id - 1) - 1px) ) {
+		.baseStyles( @id );
+		.gridElements(@id, @columnsCount);
+	}
+}
+.sizesLoop(@id) when (@id > 1) and (@id < @sizesCount){ 	//Middle sizes
+	.sizesLoop(@id - 1);
+
+	@media (min-width: extract(@triggers, @id)) and (max-width: ( extract(@triggers, @id - 1) - 1px ) ) {
+		.baseStyles( @id );
+		.gridElements(@id, @columnsCount);
+	}
+}
+.sizesLoop(@id) when (@id = 1){	//Max size
+	.sizesLoop(@id - 1);
+
+	@media (min-width: extract(@triggers, @id)) {
+		.baseStyles( @id );
+		.gridElements(@id, @columnsCount);
+	}
+}
+
+//Creating elements without size tags
+.colsLoop(@count) when (@count >= 0) {
+	.colsLoop(@count - 1);
+
+	@curName: escape("@{elementPrefix}-@{count}");
+	@curOffsetName: escape("@{offsetPrefix}-@{count}");
+	.@{curName} when (@count > 0) and (@createNoSizeElements = 1) {
+		display: inline-block;
+		width: ( (100% * @count) / @columnsCount );
+	}
+	.@{curName} when (@count = 0) and (@createNoSizeElements = 1) {
+		display: none;
+	}
+
+	.@{curOffsetName} when (@createNoSizeElements = 1) {
+		margin-left: ( (100% * @count) / @columnsCount );
+	}
+
+	@curOrderName: escape("@{orderPrefix}-@{count}");
+	.@{curOrderName} when (@createNoSizeOrders = 1) { order: @count; }
+}
+
+* {
+	box-sizing: border-box;
+}
+.colsLoop(@columnsCount);			//pos-5, pos-12, pos-offset-3, pos-offset-5 etc.
+.sizesLoop(length(@sizesNames));	//pos-xl-3, pos-xl-9, pos-offset-xl-4, pos-offset-xl-10 etc.
