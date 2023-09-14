@@ -1,9 +1,24 @@
 import os
+from flask import Flask, request, jsonify
 
 from main_sql import main_sql_func
 
-def real_main():
+app = Flask(__name__)
+
+@app.route("/api/auth/", methods=["POST"])
+def our_auth():
+    # {username, password}
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No JSON data provided'}), 400
+    
+    username = data.get('username')
+    password = data.get('password')
+
+
+if __name__ == "__main__":
     sql_engine = main_sql_func()
+    app.run(debug=True)
 
 def push_image_to_database(image_name, user_name):
     user_folder = "/" + str(user_name)
@@ -30,9 +45,6 @@ def image_exists(image_name, user_name):
         return True
     else:
         return False
-    
-real_main()
-    
 
     
 
