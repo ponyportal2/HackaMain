@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import text
 
 # test import
-from test_data import albom_name, names, generate_password, generate_path
+from sql_test_data import albom_name, names, generate_password, generate_path
 import random
 
 def main_sql_func():

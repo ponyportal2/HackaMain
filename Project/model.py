@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 
-from main_sql import main_sql_func
+from sql_main import main_sql_func
 
 app = Flask(__name__)
 
