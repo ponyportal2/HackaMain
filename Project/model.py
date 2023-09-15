@@ -72,15 +72,15 @@ def upload_file():
         flash('No file part')
         return jsonify({'status': 'error'}), 400 # No file part
 
-    username = sql_token_to_user(data.get('token'))
-    file_path = username + data.get(filename)
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
     file = request.files['file']
 
     if file.filename == '':
         flash('No selected file')
         return jsonify({'status': 'error'}), 400 # No selected file
+
+    username = sql_token_to_user(data.get('token'))
+    file_path = username + data.get(filename)
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     if file and allowed_file(file.filename):
         unique_file_path = secure_filename(file.filename)
