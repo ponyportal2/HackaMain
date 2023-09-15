@@ -17,14 +17,13 @@ body {
 }
 
 .user-panel {
+    z-index: 1;
     display: flex;
     position: relative;
     flex-direction: row;
     align-items: center;
     justify-content: end;
     gap: 2rem;
-
-    transition: color 0.1s;
 
     .user-avatar {
         width: 3rem;
@@ -44,6 +43,18 @@ body {
 
     }
 
+}
+
+.user-panel-data {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    gap: 2rem;
+
+    transition: color 0.1s;
+
+
     &:hover {
         color: #888;
     }
@@ -54,6 +65,7 @@ body {
 }
 
 .dropdown-menu {
+    z-index: 2;
     position: absolute;
     top: 110%;
     right: 0;
@@ -68,6 +80,29 @@ body {
     padding: 1rem 2rem;
     border-radius: 1rem;
     box-shadow: 0 0 1rem #222;
+
+    // transition-property: opacity, transform;
+    // transition-duration: 0.1s, 0.1s;
+    transition: opacity 0.1s, transform 0.1s;
+
+    &.closing {
+        transform: translateY(1rem);
+        opacity: 0;
+    }
+}
+
+.close-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0;
+}
+
+.closed {
+    display: none;
 }
 
 .btn-link {
