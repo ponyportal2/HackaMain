@@ -1,17 +1,6 @@
-#sql_username_exists(username) DONE 
-#
-#sql_get_user_password(username) DONE 
-#
-#sql_add_user(username, password) DONE
-#
-#sql_set_user_auth_status(username, status) DONE
-#
-#sql_post_image_location(username, file_location, album) TODO
 from sqlalchemy import text
 from sql_connection import conn
 import random
-
-
 
 def sql_token_exists_in_db(token):
     result = conn.execute(text(f"select EXISTS(select token from session where token = '{token}')")).scalar()
@@ -30,6 +19,7 @@ def sql_add_user(username, password):
     id = conn.execute(text(f"select count(id) from users")).scalar()
     conn.execute(text(f"insert into users values({id}, '{username}', '{password}', 0, NULL,  {random.choice(range(100000,999999))})"))
     conn.execute(text(f"insert into session values(NULL, {id})"))
+    conn.execute(text(f"insert into avatar values(NULL, {id})"))
 
 def sql_set_user_auth_status(username, status):
     conn.execute(text(f"update users set accepted_status = {status} where name = '{username}'"))
@@ -39,7 +29,6 @@ def sql_get_all_user_pictures_with_pattern(username, pattern):
     parsed = pattern.replace('*', '%')
     result = conn.execute(text(f"select p.path from pictures p join users u on (p.user_id = u.id) where u.name = '{username}' and p.path like '{parsed}'")).fetchall()
     return result
-
 
 def sql_post_image_location(username, file_location):
     id_user = conn.execute(text(f"select id from users where name = '{username}'")).scalar()
@@ -64,6 +53,14 @@ def sql_change_image_location(filename_from, filename_to):
 
 def sql_remove_image_location(filename):
     conn.execute(text(f"delete from pictures where path = '{filename}'"))
+
+def sql_change_avatar(username, filename):
+    id_user = conn.execute(text(f"select id from users where name = '{username}'")).scalar()
+    conn.execute(text(f"update pictures set ava_path = '{filename}' where user_id = '{id_user}'"))
+
+
+    
+
 
 
 

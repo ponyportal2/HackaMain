@@ -7,7 +7,8 @@ import random
 
 #funt for Vasyan
 from sql_funct import *
-
+# str = 'aygsjf.png'
+# res = str.split("."); 
 
 def main_sql_func():
     #selects
@@ -17,10 +18,10 @@ def main_sql_func():
     create_query = "create table users (id int, name varchar(60), password varchar(60), accepted_status int, telegram_id int, telegram_code int)" # password is stored as a hash !!!!!!
     create_query2 = "create table pictures (user_id int, path text)"
     create_query3 = "create table session (token varchar(255), user_id int)"
-    list_create = [create_query, create_query2, create_query3]
+    create_query4 = "create table avatar (ava_path text, user_id int)"
+    # add a query in there to create a table for the data
+    list_create = [create_query, create_query2, create_query3, create_query4]
     #dml
-
-    #delete
 
     #tests
     delete = "DROP TABLE users"
