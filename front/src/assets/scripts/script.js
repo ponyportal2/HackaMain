@@ -54,3 +54,8 @@ function userpanel_close() {
 
     userpanel_click();
 }
+
+function close_image_zoom() {
+    const elem = document.getElementById("zoom-popup");
+    elem.style.display = 'none';
+}

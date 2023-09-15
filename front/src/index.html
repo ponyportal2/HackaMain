@@ -106,6 +106,15 @@
         <div class="row">
           <div class="pos-12">
             <div class="files" id="files">
+
+              <div class="file image" style="background-image: url(assets/images/user.webp);">
+                <div class="content" onclick="openimage()">
+                  <p class="filename">
+                    user.webp
+                  </p>
+                </div>
+              </div>
+
             </div>
           </div>
           
@@ -114,6 +123,20 @@
     </div>
 
     
+    <div class="zoom-popup popup" id="zoom-popup">
+      <div class="container">
+        <div class="row">
+          <div class="pos-12">
+            <div class="zoom-image-wrapper">
+              <div class="zoom-image" style="background-image: url(assets/images/user.webp);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drag-area">
+        <a href="#" onclick="close_image_zoom()">Close image</a>
+      </div>
+    </div>
 
     <script src="assets/scripts/script.js"></script>
   </body>
