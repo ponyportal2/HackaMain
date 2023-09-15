@@ -3,3 +3,7 @@ front/node_modules
 front/dist
 other_img
 .DS_Store
+__pycache__
+*/__pycache__
+*.db
+*.db-journal

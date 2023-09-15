@@ -75,14 +75,14 @@ def verify_token():
 @app.route("/api/upload_file/", methods=["POST"])
 def upload_file():
     # input: {token, filename} , file
-    data_error_check(data)
+    # data_error_check(data)
 
     if 'file' not in request.files:
         flash('No file part')
         return jsonify({'status': 'error'}), 400 # No file part
 
-    username = sql_token_to_user(data.get('token'))
-    file_path = username + data.get(filename)
+    username = sql_token_to_user(request.form['token'])
+    file_path = username + '/' + request.form['filename']
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     file = request.files['file']

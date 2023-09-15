@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms</title>
+
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+</head>
+<body>
+    <style>
+        input {
+            display: block;
+        }
+    </style>
+    
+    <div>
+        <h2>Global info</h2>
+        <input type="text" id="serverIp" placeholder="sever ip" value="http://127.0.0.1:5000">
+        <input type="text" id="authToken" placeholder="auth token">
+    </div>
+
+    <div>
+        <h2>Register</h2>
+        <form id="registerForm">
+            <input type="text" id="reg_login" placeholder="Login">
+            <input type="password" id="reg_password" placeholder="Password">
+            <input type="submit" value="Register">
+        </form>
+    </div>
+    
+    <div>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="login" placeholder="Login">
+            <input type="password" id="password" placeholder="Password">
+            <input type="submit" value="Login">
+        </form>
+    </div>
+    
+
+    <div>
+        <h2>Send image</h2>
+        <form id="sendForm">
+            <input type="text" id="fileName" placeholder="myfile.png">
+            <input type="file" id="filePicker">
+            <input type="submit" value="Send File">
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
