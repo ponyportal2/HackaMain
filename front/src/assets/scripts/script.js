@@ -7,6 +7,7 @@ const filenames = [
     "9KxPXaSBW9Q.webp",
     "9eO6maQiFGo.webp",
     "9fbdd26407902676b370d3efb789dde9.webp",
+    "mount.jpeg",
 ];
 
 function createElementFromHTML(htmlString) {
@@ -20,7 +21,7 @@ function createElementFromHTML(htmlString) {
 const files_elem = document.getElementById("files");
 
 filenames.forEach(name => {
-    let html = `<div class="file image" style="background-image: url(assets/images/fileimg/${name});"><div class="content"><p class="filename">${name}</p></div></div>`;
+    let html = `<div class="file image" onclick="open_image(this.id);" id="img_${name}" style="background-image: url(assets/images/fileimg/${name});"><div class="content"><p class="filename">${name}</p></div></div>`;
     console.log(html)
     files_elem.appendChild(createElementFromHTML(html));
 });
@@ -53,9 +54,4 @@ function userpanel_close() {
         return;
 
     userpanel_click();
-}
-
-function close_image_zoom() {
-    const elem = document.getElementById("zoom-popup");
-    elem.style.display = 'none';
 }

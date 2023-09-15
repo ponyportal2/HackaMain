@@ -2,3 +2,4 @@
 front/node_modules
 front/dist
 other_img
+.DS_Store
