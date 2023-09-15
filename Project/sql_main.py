@@ -13,7 +13,7 @@ def main_sql_func():
     select = "select * from users"
     select2 = "select * from pictures"
     #create table
-    create_query = "create table users (id int, name varchar(60), password varchar(60))"
+    create_query = "create table users (id int, name varchar(60), password varchar(60), authen_status int)"
     create_query2 = "create table pictures (id int, path text, albom varchar(60))"
     #dml
 
@@ -21,7 +21,7 @@ def main_sql_func():
     delete = "drop table users"
     delete2 = "drop table pictures"
     create_tables(conn, create_query, create_query2)
-    # insert_tables(conn, 100)
+    insert_tables(conn, 100)
     select_all(conn, select, select2)
     # drop_tables()
     return engine
