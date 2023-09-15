@@ -25,7 +25,11 @@ def main_sql_func():
     #tests
     delete = "DROP TABLE users"
     delete2 = "DROP TABLE pictures"
-    create_tables(list_create)
+    try: 
+        select_table(select)
+    except Exception as e:
+        create_tables(list_create)
+        
     #insert_tables(1000)
     #print(sql_username_exists('John'))
     #print(sql_username_exists('LL'))
@@ -68,11 +72,10 @@ def insert_tables(end_range):
         
         
 
-def select_all(select, select2):
-    result = conn.execute(text(select)).fetchall()
+def select_table(select):
+    result = conn.execute(text(select)).scalar()
     print(result)
-    result2 = conn.execute(text(select2)).fetchall()
-    print(result2)
+    return result
 
 
 def drop_tables(delete, delete2):
