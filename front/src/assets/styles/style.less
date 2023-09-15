@@ -8,6 +8,7 @@ body {
     min-height: 100vh;
     background-color: #222;
     color: #fff;
+    user-select: none;
 }
 
 .top-panel {
@@ -169,4 +170,118 @@ body {
         top: unset;
         
     }
+}
+
+.file {
+    position: relative;
+
+    & .content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+}
+
+.image .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+}
+
+.image {
+    position: relative;
+    cursor: pointer;
+    z-index: 0;
+    
+    .filename {
+        z-index: 3;
+        opacity: 0.0;
+        transition: opacity 0.1s;
+
+        font-size: 1rem;
+        word-break: break-all;
+    }
+
+    &::before {
+        z-index: 1;
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+
+        background-color: black;
+        opacity: 0.0;
+        transition: opacity 0.1s;
+    }
+
+    &::after {
+        z-index: 2;
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+
+        background-image: url(/assets/images/magnifying-glass.svg);
+        background-size: 25%;
+        background-repeat: no-repeat;
+        background-position: center center;
+        opacity: 0.0;
+        transition: opacity 0.1s;
+    }
+
+    &:hover {
+        &::before {
+            opacity: 0.4;
+        }
+        
+        &::after {
+            opacity: 1.0;
+        }
+
+        .filename {
+            opacity: 1.0;
+        }
+    }
+}
+
+.video .content {
+    background-color: #000;
+}
+
+.album {
+    transition: background-color 0.1s;
+    background-color: transparent;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ffffff20;
+    }
+}
+
+.album .content {
+
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.folder-icon {
+    width: 10rem;
+    height: 10rem;
+    background-image: url(/assets/images/folder.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+
 }

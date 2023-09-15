@@ -20,7 +20,7 @@ function createElementFromHTML(htmlString) {
 const files_elem = document.getElementById("files");
 
 filenames.forEach(name => {
-    let html = `<div class="file image" style="background-image: url(assets/images/fileimg/${name});"></div>`;
+    let html = `<div class="file image" style="background-image: url(assets/images/fileimg/${name});"><div class="content"><p class="filename">${name}</p></div></div>`;
     console.log(html)
     files_elem.appendChild(createElementFromHTML(html));
 });

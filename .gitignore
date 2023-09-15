@@ -1,2 +1,4 @@
 *.o
 front/node_modules
+front/dist
+other_img
