@@ -1,11 +1,20 @@
+PY = python3
+RM = rm -rf
 all: run
 check:
-	python3 setup.py
+	${PY} setup.py
+
 req:
 	pip3 install -r requirements.txt
+
 run:
-	python3 model.py
-test: clean
-	python3 sql_main.py
-clean:
-	rm -rf metanit.db
+	${PY} model.py
+
+test: delete_base
+	${PY} sql_main.py
+
+clean: 
+	${RM} __pychache__
+
+delete_base:
+	${RM} metanit.db
