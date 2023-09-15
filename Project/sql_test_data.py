@@ -25,8 +25,8 @@ names = [
     "Julian", "Georgia", "Christopher", "Brielle", "Joshua", "Valeria", "Nicholas", "Vanessa", "Jackson", "Ivy",
     "Aidan", "Clara", "Colton", "Rylee", "Justin", "Reagan", "Robert", "Jordyn", "Henry", "Beatrix",
     "Evan", "Amara", "Max", "Raegan", "Liam", "Genevieve", "Tyler"]
-
 albom_name = ['Summer', 'Nudes', 'IvanZolo2004','TikTok', 'Folder1']
+
 def generate_password(length):
     characters = string.ascii_letters + string.digits
     password = ''.join(random.choice(characters) for _ in range(length)).replace("'", '').replace('"', '')
@@ -36,4 +36,10 @@ def generate_path(length):
     characters = string.ascii_letters + string.digits
     path = ''.join(random.choice(characters) for _ in range(length))+'.png'.replace("'", '').replace('"', '')
     return path 
+
+def generate_tg_id(length):
+    characters = string.digits
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
 
