@@ -6,7 +6,6 @@ body {
     font-size: 20px;
     font-family: 'Roboto', sans-serif;
     min-height: 100vh;
-    width: 100vw;
     background-color: #222;
     color: #fff;
 }
@@ -18,10 +17,13 @@ body {
 
 .user-panel {
     display: flex;
+    position: relative;
     flex-direction: row;
     align-items: center;
     justify-content: end;
     gap: 2rem;
+
+    transition: color 0.1s;
 
     .user-avatar {
         width: 3rem;
@@ -39,6 +41,49 @@ body {
     .user-name {
         display: inline-block;
 
+    }
+
+    &:hover {
+        color: #888;
+    }
+}
+
+.small {
+    font-size: 1rem;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    right: 0;
+
+    background-color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    gap: 1rem;
+
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 1rem #222;
+}
+
+.btn-link {
+    text-decoration: none;
+    color: #26B;
+    transition: color 0.1s;
+
+    &:hover {
+        color: lighten(#26b, 10%);
+    }
+}
+
+.logout {
+    color: #F42;
+
+    &:hover {
+        color: lighten(#F42, 10%);
     }
 }
 

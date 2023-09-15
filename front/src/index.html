@@ -25,13 +25,52 @@
           </div>
   
           <div class="pos-6">
-            <div class="user-panel small">
-              <div class="user-avatar">
+            <div class="user-panel small" onclick="userpanel_click();" style="cursor: pointer; user-select: none;">
+              <span class="user-avatar">
                 <img src="assets/images/user.webp" alt="User">
+              </span>
+              <p class="user-name">verda_quinoa</p>
+
+              <div class="dropdown-menu" id="user-dropdown">
+                <a href="#" class="btn-link pick-image">Change profile picture</a>
+                <a href="#" class="btn-link logout">Log out</a>
               </div>
-              <p class="user-name">Verda Quinoa</p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="files-panel albums">
+      <div class="container">
+        <div class="row">
+          <div class="pos-12">
+            <h2 class="files-header albums">Your albums</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="pos-12">
+            <div class="files album" id="albums">
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="files-panel videos">
+      <div class="container">
+        <div class="row">
+          <div class="pos-12">
+            <h2 class="files-header videos">Your videos</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="pos-12">
+            <div class="files album" id="videos">
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -40,19 +79,20 @@
       <div class="container">
         <div class="row">
           <div class="pos-12">
-            <h2 class="files-header">Your media</h2>
+            <h2 class="files-header">All media</h2>
           </div>
         </div>
         <div class="row">
           <div class="pos-12">
             <div class="files" id="files">
-              <!-- <div class="file image" style="background-image: url(assets/images/user.webp);"></div> -->
             </div>
           </div>
           
         </div>
       </div>
     </div>
+
+    
 
     <script src="assets/scripts/script.js"></script>
   </body>

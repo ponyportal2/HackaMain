@@ -24,3 +24,12 @@ filenames.forEach(name => {
     console.log(html)
     files_elem.appendChild(createElementFromHTML(html));
 });
+
+function userpanel_click() {
+    const elem = document.getElementById("user-dropdown");
+    
+    if (elem.style.display == 'flex')
+        elem.style.display = 'none';
+    else
+        elem.style.display = 'flex';
+}
