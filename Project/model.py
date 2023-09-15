@@ -12,6 +12,9 @@ if __name__ == "__main__":
 @app.route("/api/auth/", methods=["POST"])
 def our_auth():
     # input: {username, password}
+
+    validity = ''
+
     data = request.get_json()
     if not data:
         return jsonify({'error': 'No JSON data provided'}), 400
@@ -19,14 +22,16 @@ def our_auth():
     username = data.get('username')
     password = data.get('password')
 
-    sql_username_exists(username)
-    sql_get_user_password(username)
-    sql_add_user(username, password)
-    sql_set_uset_auth_status(username, status) # status will be 1 or 0
-
-    if yes:
+    # sql_get_user_password(username)
+    # sql_add_user(username, password)
+    # sql_set_user_auth_status(username, status) # status will be 1 or 0
+    # sql_get_all_user_album_pictures(username)
+    # sql_post_image_location(username, album)
+    if sql_username_exists(username) == False:
+        return jsonify({'status': 'no_user'})
+    elif sql_get_user_password(username) == password:
         return jsonify({'status': 'valid'})
-    elif no:
+    else:
         return jsonify({'status': 'invalid'})
 
 @app.route("/upload/", methods=["GET"])
