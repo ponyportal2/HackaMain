@@ -25,11 +25,15 @@
           </div>
   
           <div class="pos-6">
-            <div class="user-panel small" onclick="userpanel_click();" style="cursor: pointer; user-select: none;">
-              <span class="user-avatar">
-                <img src="assets/images/user.webp" alt="User">
-              </span>
-              <p class="user-name">verda_quinoa</p>
+            <div class="user-panel small" style=" user-select: none;">
+              <div class="close-area closed" id="user-dropdown-close-area" onclick="userpanel_close()"></div>
+              
+              <div class="user-panel-data" onclick="userpanel_click();" style="cursor: pointer;">
+                <span class="user-avatar">
+                  <img src="assets/images/user.webp" alt="User">
+                </span>
+                <p class="user-name">verda_quinoa</p>
+              </div>
 
               <div class="dropdown-menu" id="user-dropdown">
                 <a href="#" class="btn-link pick-image">Change profile picture</a>

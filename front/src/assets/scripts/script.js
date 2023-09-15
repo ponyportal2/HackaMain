@@ -25,11 +25,32 @@ filenames.forEach(name => {
     files_elem.appendChild(createElementFromHTML(html));
 });
 
+let anim_going = false;
 function userpanel_click() {
-    const elem = document.getElementById("user-dropdown");
+    if (anim_going)
+        return;
+
+    const dd = document.getElementById("user-dropdown");
+    const close = document.getElementById("user-dropdown-close-area");
     
-    if (elem.style.display == 'flex')
-        elem.style.display = 'none';
-    else
-        elem.style.display = 'flex';
+    if (dd.classList.contains("closing")) {
+        dd.classList.remove("closing")
+        dd.classList.remove("closed")
+        close.classList.remove("closed")
+    } else {
+        dd.classList.add("closing")
+        close.classList.add("closed")
+        anim_going = true;
+        setTimeout(() => {
+            dd.classList.add("closed")
+            anim_going = false;
+        }, 100)
+    }
+}
+
+function userpanel_close() {
+    if (anim_going)
+        return;
+
+    userpanel_click();
 }
