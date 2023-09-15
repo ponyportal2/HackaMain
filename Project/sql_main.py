@@ -22,33 +22,33 @@ def main_sql_func():
     # add a query in there to create a table for the data
     list_create = [create_query, create_query2, create_query3, create_query4]
     #dml
-
     #tests
     delete = "DROP TABLE users"
     delete2 = "DROP TABLE pictures"
     create_tables(list_create)
-    insert_tables(1000)
-    print(sql_username_exists('John'))
-    print(sql_username_exists('LL'))
-    print(sql_username_exists('Psychokid'))
-    print(f"Password_hash for psychokid: ", sql_get_user_password_hash('Psychokid'))
-    sql_add_user('Misha', 'VASYA-petya')
-    print(sql_username_exists('Misha'))
-    print(f"Password_hash for Misha: ", sql_get_user_password_hash('Misha'))
-    sql_set_user_auth_status('Misa', 1)
-    print(sql_get_user_telegram_authkey("Misha"))
-    sql_change_auth_token('Misha', 'XXXvideos')
-    print(sql_token_to_user('XXXvideos'))
-    print(sql_get_all_user_pictures_with_pattern("John", "u*"))
+    #insert_tables(1000)
+    #print(sql_username_exists('John'))
+    #print(sql_username_exists('LL'))
+    #print(sql_username_exists('Psychokid'))
+    #print(f"Password_hash for psychokid: ", sql_get_user_password_hash('Psychokid'))
+    #sql_add_user('Misha', 'VASYA-petya')
+    #print(sql_username_exists('Misha'))
+    #print(f"Password_hash for Misha: ", sql_get_user_password_hash('Misha'))
+    #sql_set_user_auth_status('Misa', 1)
+    #print(sql_get_user_telegram_authkey("Misha"))
+    #sql_change_auth_token('Misha', 'XXXvideos')
+    #print(sql_token_to_user('XXXvideos'))
+    #print(sql_get_all_user_pictures_with_pattern("John", "u*"))
 
     #print(sql_get_all_user_album_names('John'))
 
     #tests
 
     #select_all(select, select2)
-
-    drop_tables(delete, delete2)
+    #drop_tables(delete, delete2)
     #return engine
+
+
 
 
 def create_tables(list):
