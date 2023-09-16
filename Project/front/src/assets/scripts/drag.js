@@ -41,14 +41,17 @@ function close_image_zoom() {
 }
 
 function open_image(elem) {
-    
-    // const elem = document.getElementById("zoom-popup");
-    // elem.classList.remove('closed');
+    // console.log(`Opening image ${elem.style.backgroundImage}`);
+    const popup = document.getElementById("zoom-popup");
+    popup.classList.remove('closed');
     
     const bgelem = document.getElementById("zoom-popup-image");
     // let url = `assets/images/fileimg/${img_name}`;
     update_zoom_pos(0.0, 0.0, 0.0)
     bgelem.src = elem.style.backgroundImage.slice(5, -2);
+    bgelem.style = null;
+    console.log('test ', bgelem.width, bgelem.height);
+    console.log(bgelem);
     let size = [bgelem.width, bgelem.height];
     zoom_state.img_w = size[0];
     zoom_state.img_h = size[1];

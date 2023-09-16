@@ -44,8 +44,25 @@ function dragOverHandler(ev) {
   ev.preventDefault();
 }
 
+function clearInputFile(f){
+  if(f.value){
+      try{
+          f.value = ''; //for IE11, latest Chrome/Firefox/Opera...
+      }catch(err){ }
+      if(f.value){ //for IE5 ~ IE10
+          let form = document.createElement('form'),
+              parentNode = f.parentNode, ref = f.nextSibling;
+          form.appendChild(f);
+          form.reset();
+          parentNode.insertBefore(f,ref);
+      }
+  }
+}
+
+
 function send_files(ev) {
   ev.preventDefault();
+  console.log('Sending', ev);
 
   document.getElementById('drop-area').classList.add('loading');
 
@@ -71,6 +88,19 @@ function send_files(ev) {
 
 
   document.getElementById('drop-area').classList.add('remove');
+}
+
+function open_dragdrop() {
+  document.getElementById('upload-popup')
+    .classList.remove('closed');
+  
+  clearInputFile(document.getElementById('files_input'));
+}
+
+function close_dragdrop() {
+  document.getElementById('upload-popup')
+    .classList.add('closed');
+
 }
 
 /*
