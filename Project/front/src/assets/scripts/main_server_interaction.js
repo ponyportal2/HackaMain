@@ -16,7 +16,13 @@ async function update_avatar() {
     let elems = document.getElementsByClassName('user-avatar');
     for (let i = 0; i < elems.length; i++) {
         let el = elems[i];
-        el.dataset.src = `/api/images/${ava}`;
+        if (ava) {
+            el.dataset.src = `/api/images/${ava}`;
+            el.classList.add('img-load-assist')
+        } else {
+            el.src = `/static/app/assets/images/user.webp`;
+            el.classList.remove('img-load-assist')
+        }
     }
 }
 

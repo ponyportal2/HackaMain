@@ -71,7 +71,12 @@ async function logout() {
 async function get_avatar() {
     return json_request('/api/get_avatar_pic', { token: get_auth_token() })
     .then(response => response.json())
-    .then(data => data.returned);
+    .then(data => data.returned == 'ur dumb' ? null : data.returned);
+}
+
+async function set_avatar(name) {
+    return json_request('/api/set_avatar_pic', { token: get_auth_token(), filename: name })
+    .then(response => response.json())
 }
 
 

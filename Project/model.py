@@ -188,7 +188,7 @@ def set_avatar_pic():
     username = sql_token_to_user(data.get('token'))
     filename = data.get('filename')
 
-    sql_change_avatar(username, username + "/" + filename) # ????
+    sql_change_avatar(username, filename) # ????
     return jsonify({'status': 'success'}), 200
 
 @app.route("/api/get_avatar_pic/", methods=["POST"]) # WORKS
