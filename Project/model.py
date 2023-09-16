@@ -4,6 +4,8 @@ from flask import Flask, request, jsonify
 
 from sql_main import main_sql_func
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import  FileStorage
 
 from sql_funct import *
 
@@ -75,19 +77,19 @@ def upload_file():
     file_path = username + '/' + request.form['filename']
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    file = request.files['file']
+    file = request.files['file'].read()
 
-    if file.filename == '':
+    if file_path == '':
         flash('No selected file')
         return jsonify({'status': 'error'}), 400 # No selected file
 
-    username = sql_token_to_user(data.get('token'))
-    file_path = username + data.get(filename)
+    username = sql_token_to_user(request.form['token'])
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    if file and allowed_file(file.filename):
-        unique_file_path = secure_filename(file.filename)
-        file.save(file_path)
+    if file and allowed_file(file_path):
+        unique_file_path = secure_filename(file_path)
+        with open(file_path, "wb") as fs:
+            fs.write(file)
         return jsonify({'status': 'success'}), 200
 
 @app.route("/api/mv_file/", methods=["POST"]) # NOT_TESTED
@@ -112,7 +114,7 @@ def del_file():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    file_name = username + data.get('filename')
+    file_name = username + '/' + data.get('filename')
     os.remove(file_name)
     sql_remove_image_location(file_name)
     return jsonify({'status': 'success'}), 200
@@ -142,6 +144,7 @@ def set_avatar_pic():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
+    filename = data.get('filename')
     sql_change_avatar(username, username + "/" + filename) # ????
 
     return jsonify({'status': 'success'}), 200
