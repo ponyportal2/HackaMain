@@ -81,13 +81,13 @@ function send_files(ev) {
       })
       .then(response => response.json())
       .then(data => {
-          alert(data);
-          console.log(data);
+        if (data.status != 'success')
+          alert(`Failed to load file: ${file.name}`);
+        console.log(data);
       });
   }
 
-
-  document.getElementById('drop-area').classList.add('remove');
+  close_dragdrop();
 }
 
 function open_dragdrop() {
