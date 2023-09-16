@@ -67,9 +67,9 @@ def verify_token():
     print(f'Token: {token} does exists: {sql_token_exists_in_db(token)}')
     if sql_token_exists_in_db(token) == True:
         username = sql_token_to_user(data.get('token'))
-        return jsonify({'status': 'valid', 'user': 'username'})
+        return jsonify({'status': 'valid', 'user': f'{username}'})
     else:
-        return jsonify({'status': 'invalid'})
+        return jsonify({'status': 'invalid'}), 400
 
 @app.route("/api/upload_file/", methods=["POST"]) # WORKS
 def upload_file():
@@ -170,9 +170,17 @@ def get_avatar_pic():
     # {token}
     data = request.json
     data_error_check(data)
-    username = sql_token_to_user(data.get('token'))
+    token = data.get('token')
+    if (token and sql_token_exists_in_db(token)):
+        username = sql_token_to_user(token)
+        avatar = sql_get_avatar(username)
+        if (avatar): 
+            return jsonify({'exists': True, 'returned': avatar}), 200
+        else:
+            return jsonify({'exists': False, 'returned': 'ur dumb'}), 200
+    else:
+        return jsonify({'status': 'failed'}), 401
 
-    return jsonify({'returned': sql_get_avatar(username)})
 
 @app.route("/api/logout/", methods=["POST"]) # TESTED
 def logout():
@@ -191,11 +199,16 @@ def get_image(kartinka):
         token = auth_header.split("Bearer ")[1]
 
     if sql_token_exists_in_db(token) == True:
-        pictures = sql_get_all_user_pictures_with_pattern(sql_token_to_user(token))
-        if kartinka in pictures:
+        user = sql_token_to_user(token)
+        print('Hello darling 4, user: ', user)
+        if sql_does_image_exist(kartinka):
+            print('Hello darling 3')
             image_path = os.path.join(kartinka)
+            print('Hello darling 2', image_path)
             if not os.path.exists(image_path):
                 return jsonify({'status': 'error'}), 400 # No such file
+
+            print('Hello darling', image_path)
             return send_file(image_path, mimetype='image/jpeg')
         else: 
             return jsonify({'status': 'invalid_token'}), 400 # No file part

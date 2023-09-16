@@ -40,8 +40,7 @@ function close_image_zoom() {
     elem.classList.add('closed');
 }
 
-function open_image(id) {
-    const img_name = id.substring("img_".length);
+function open_image(img_name) {
     
     const elem = document.getElementById("zoom-popup");
     elem.classList.remove('closed');

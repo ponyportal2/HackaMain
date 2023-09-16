@@ -3,15 +3,7 @@ from sql_connection import conn
 import random
 
 
-def commit_changes(func):
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        conn.commit()
-        return result
-        # print("Commit")
-    return wrapper
 
-@commit_changes
 def sql(string):
     try:
         return conn.execute(text(string))
@@ -19,7 +11,11 @@ def sql(string):
         print(f"Can't do that\n error discription: {e}")
 
 def sql_token_exists_in_db(token):
-    result = sql(f"select EXISTS(select token from session where token = '{token}')").scalar()
+    result = 0
+    try:
+        result = sql(f"select EXISTS(select token from session where token = '{token}')").scalar()
+    except:
+        result = 0
     return int(result)
 
 
@@ -62,12 +58,20 @@ def sql_change_auth_token(username, token):
     sql(f"insert into session values ('{token}', {id_user})")
 
 def sql_token_to_user(token):
-    id = sql(f"select user_id from session where token = '{token}'").scalar()
-    name = sql(f"select name from users where id = {id}").scalar()
-    return name
+    try:
+        id = sql(f"select user_id from session where token = '{token}'").scalar()
+        name = sql(f"select name from users where id = {id}").scalar()
+        return name
+    except Exception as e:
+        print("Failed to cum", e)
 
 def sql_change_image_location(filename_from, filename_to):
     sql(f"update pictures set path = '{filename_to}' where path = '{filename_from}'")
+
+###
+def sql_does_image_exist(path):
+    result = sql(f"select EXISTS(select path from pictures where path = '{path}')")
+    return result
 
 def sql_remove_image_location(filename):
     sql(f"delete from pictures where path = '{filename}'")
@@ -77,8 +81,12 @@ def sql_change_avatar(username, filename):
     sql(f"update avatar set ava_path = '{filename}' where user_id = {id_user}")
 
 def sql_get_avatar(username):
-    id_user = sql(f"select id from users where name = '{username}'").scalar()
-    result = sql(f"select ava_path from avatar where user_id = '{id_user}'").scalar()
+    result = 0
+    try:
+        id_user = sql(f"select id from users where name = '{username}'").scalar()
+        result = sql(f"select ava_path from avatar where user_id = '{id_user}'").scalar()
+    except:
+        result = None
     return result
 
 def sql_delete_token(token):

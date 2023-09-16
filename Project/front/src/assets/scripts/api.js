@@ -11,12 +11,30 @@ function json_request(url, req) {
     })
 }
 
+function get_request(url) {
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + get_auth_token(),
+        },
+    })
+}
+
 async function verify_token(token) {
     return json_request('/api/verify_token', { token: token })
     .then(response => response.json())
     .then(data => {
         console.log(data);
         return data.status == 'valid';
+    });
+}
+
+async function get_username(token) {
+    return json_request('/api/verify_token', { token: token })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        return (data.status == 'valid') ? data.user : null;
     });
 }
 
@@ -48,4 +66,16 @@ async function logout() {
     return json_request('/api/logout', { token: get_auth_token() })
     .then(response => response.json())
     .then(data => {});
+}
+
+async function get_avatar() {
+    return json_request('/api/get_avatar_pic', { token: get_auth_token() })
+    .then(response => response.json())
+    .then(data => data.returned);
+}
+
+
+async function get_images() {
+    return json_request('/api/get_all_files/', { token: get_auth_token(), pattern: '*' })
+    .then(response => response.json());
 }

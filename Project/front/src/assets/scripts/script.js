@@ -1,3 +1,18 @@
+
+
+
+
+function createElementFromHTML(htmlString) {
+    var div = document.createElement('div');
+    div.innerHTML = htmlString.trim();
+  
+    // Change this to div.childNodes to support multiple top-level nodes.
+    return div.firstChild;
+  }
+
+  /*
+const files_elem = document.getElementById("files");
+
 const filenames = [
     "2c32c35da827fad015c4664c699edd07.webp",
     "7692ca2a02e9f6c6e6dbfb4d5ea1b073.webp",
@@ -11,21 +26,11 @@ const filenames = [
     "car.webp",
 ];
 
-function createElementFromHTML(htmlString) {
-    var div = document.createElement('div');
-    div.innerHTML = htmlString.trim();
-  
-    // Change this to div.childNodes to support multiple top-level nodes.
-    return div.firstChild;
-  }
-
-const files_elem = document.getElementById("files");
-
 filenames.forEach(name => {
     let html = `<div class="file image" onclick="open_image(this.id);" id="img_${name}" style="background-image: url(assets/images/fileimg/${name});"><div class="content"><p class="filename">${name}</p></div></div>`;
     console.log(html)
     files_elem.appendChild(createElementFromHTML(html));
-});
+});*/
 
 let anim_going = false;
 function userpanel_click() {

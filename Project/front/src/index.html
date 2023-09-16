@@ -30,9 +30,9 @@
               
               <div class="user-panel-data" onclick="userpanel_click();" style="cursor: pointer;">
                 <span class="user-avatar">
-                  <img src="assets/images/user.webp" alt="User">
+                  <img class="user-avatar img-load-assist" src="/assets/images/user.webp" alt="User">
                 </span>
-                <p class="user-name">verda_quinoa</p>
+                <p class="user-name"></p>
               </div>
 
               <div class="dropdown-menu closing closed" id="user-dropdown">
@@ -117,7 +117,7 @@
         <div class="row">
           <div class="pos-12">
             <div class="files" id="files">
-
+              <div class="file image bg-load-assist" onclick="open_image('/verdachinna/car.jpg');" style="background-image: url(/api/images/verdachinna/car.jpg);"><div class="content"><p class="filename">verdachinna/car.jpg</p></div></div>
             </div>
           </div>
           
@@ -180,5 +180,6 @@
     <script src="assets/scripts/drag.js"></script>
     <script src="assets/scripts/folder.js"></script>
     <script src="assets/scripts/dragdrop.js"></script>
+    <script src="assets/scripts/main_server_interaction.js"></script>
   </body>
 </html>
