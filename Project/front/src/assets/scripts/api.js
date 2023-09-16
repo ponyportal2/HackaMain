@@ -14,7 +14,10 @@ function json_request(url, req) {
 async function verify_token(token) {
     return json_request('/api/verify_token', { token: token })
     .then(response => response.json())
-    .then(data => (data.status == 'valid'));
+    .then(data => {
+        console.log(data);
+        return data.status == 'valid';
+    });
 }
 
 async function sign_in(login, password) {

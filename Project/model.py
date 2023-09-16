@@ -17,6 +17,9 @@ import shutil
 main_sql_func()
 app = Flask(__name__)
 
+# pbkdf2:sha256:600000$V8fkPte4iaVXhRNW$d1e84745562ce3c038cb7330164123b9d35cc871b3aa522d817adfaa34ef4b00
+# pbkdf2:sha256:600000$V8fkPte4iaVXhRNW$d1e84745562ce3c038cb7330164123b9d35cc871b3aa522d817adfaa34ef4b00
+
 @app.route("/api/login/", methods=["POST", "GET"]) # TESTED
 def login():
     data = request.json
@@ -34,6 +37,7 @@ def login():
     elif check_password_hash(sql_get_user_password_hash(username), password):
         auth_token = generate_password_hash(f'{username}_%_{password}_%_{current_time_string}') 
         sql_change_auth_token(username, auth_token)
+        print(f'Signed in with token: {auth_token}')
         return jsonify({'status': 'ok', 'token': auth_token})
     else:
         return jsonify({'status': 'invalid'})
@@ -60,6 +64,7 @@ def verify_token():
     data_error_check(data)
     
     token = data.get('token')
+    print(f'Token: {token} does exists: {sql_token_exists_in_db(token)}')
     if sql_token_exists_in_db(token) == True:
         username = sql_token_to_user(data.get('token'))
         return jsonify({'status': 'valid', 'user': 'username'})

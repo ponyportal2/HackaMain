@@ -167,6 +167,8 @@
     <script type="module">
       verify_token(get_auth_token())
       .then(is_valid => {
+          console.log("Token: ", get_auth_token());
+          console.log("Is valid: ", is_valid);
           if (!is_valid)
               location.assign(`${PREFIX}/login.html`);
       })

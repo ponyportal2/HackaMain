@@ -58,7 +58,8 @@ def sql_get_user_telegram_authkey(username):
 
 def sql_change_auth_token(username, token):
     id_user = sql(f"select id from users where name = '{username}'").scalar()
-    sql(f"update session set token = '{token}' where user_id = {id_user}")
+    # sql(f"update session set token = '{token}' where user_id = {id_user}")
+    sql(f"insert into session values ('{token}', {id_user})")
 
 def sql_token_to_user(token):
     id = sql(f"select user_id from session where token = '{token}'").scalar()
