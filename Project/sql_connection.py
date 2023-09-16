@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import atexit
 
-engine = create_engine("sqlite:///metanit.db", echo=True)
+engine = create_engine("sqlite:///metanit.db", echo=False)
 conn = engine.connect()
 Session = sessionmaker(bind=engine)
 print(engine)

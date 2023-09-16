@@ -1,6 +1,8 @@
 import os
 import time
 import requests
+import shutil
+
 import json
 from flask import Flask, request, jsonify, send_file, redirect, url_for, session, render_template, abort
 from authlib.integrations.flask_client import OAuth
@@ -174,7 +176,8 @@ def delete_folder_req():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    return jsonify({'returned': delete_folder(f'users/{username}/{data.get("folder")}')})
+    delete_folder(f'users/{username}/{data.get("folder")}')
+    return jsonify({'status': 'ok'})
 
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
 def set_avatar_pic():
@@ -223,15 +226,11 @@ def get_image(kartinka):
 
     if sql_token_exists_in_db(token) == True:
         user = sql_token_to_user(token)
-        print('Hello darling 4, user: ', user)
         if sql_does_image_exist(f'{user}/{kartinka}'):
-            print('Hello darling 3')
             image_path = os.path.join(f'users/{user}/{kartinka}')
-            print('Hello darling 2', image_path)
             if not os.path.exists(image_path):
                 return jsonify({'status': 'error'}), 400 # No such file
 
-            print('Hello darling', image_path)
             return send_file(image_path, mimetype='image/jpeg')
         else: 
             return jsonify({'status': 'invalid_token'}), 400 # No file part
@@ -307,7 +306,7 @@ def create_folder(directory):
     os.makedirs(directory, exist_ok=True)
 
 def delete_folder(directory): 
-    os.rmdir(directory)
+    shutil.rmtree(directory)
 
 def data_error_check(data):
     data = request.get_json()
