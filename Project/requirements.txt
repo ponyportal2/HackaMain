@@ -2,3 +2,4 @@ telebot
 psycopg2-binary
 sqlalchemy
 flask
+jsonify
