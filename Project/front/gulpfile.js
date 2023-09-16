@@ -8,7 +8,7 @@ const { files_map } = require('./gulp_tasks/tasks');
 
 const config = {
     from: 'src/',
-    to: 'dist/',
+    to: '../static/app/',
 };
 
 function sanitize_path(filepath) {
@@ -144,6 +144,7 @@ function watchTask() {
     browser_sync.init({
         server: {
             baseDir: config.to,
+            cors: true
         }
     });
 

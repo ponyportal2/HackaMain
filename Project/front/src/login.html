@@ -19,7 +19,7 @@
 
           <div class="pos-12">
             <div class="form-wrap">
-              <form id="register-form" class="form register-form">
+              <form id="register-form" class="form register-form" onsubmit="trigger_signup(event)">
                 <h2 class="form-hdr">Sign up</h2>
                 <input type="text" id="reg_login" placeholder="Login">
                 <input type="password" id="reg_password" placeholder="Password">
@@ -28,7 +28,7 @@
 
               <div class="form-hdr">OR</div>
 
-              <form id="login-form" class="form login-form">
+              <form id="login-form" class="form login-form" onsubmit="trigger_signin(event)">
                 <h2 class="form-hdr">Sign in</h2>
                 <input type="text" id="login" placeholder="Login">
                 <input type="password" id="password" placeholder="Password">
@@ -40,5 +40,9 @@
         </div>
       </div>
     </div>
+
+    <script src="assets/scripts/get_auth_token.js"></script>
+    <script src="assets/scripts/api.js"></script>
+    <script src="assets/scripts/signupin.js"></script>
   </body>
 </html>

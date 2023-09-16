@@ -7,3 +7,10 @@ __pycache__
 */__pycache__
 *.db
 *.db-journal
+Project/static/app
+node_modules
+*/node_modules
+*/*/node_modules
+*/*/*/node_modules
+*/*/*/*/node_modules
+*/*/*/*/*/node_modules

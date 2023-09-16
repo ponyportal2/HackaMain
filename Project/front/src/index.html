@@ -37,7 +37,7 @@
 
               <div class="dropdown-menu closing closed" id="user-dropdown">
                 <a href="#" class="btn-link pick-image">Change profile picture</a>
-                <a href="#" class="btn-link logout">Log out</a>
+                <a href="#" class="btn-link logout" onclick="trigger_logout(event)">Log out</a>
               </div>
             </div>
           </div>
@@ -56,16 +56,20 @@
           <div class="pos-12">
             <div class="files albums" id="albums">
               <div class="file album">
-                <div class="content"><div class="folder-icon" onclick="open_album(this.id);" id="folder_1"></div><span class="album-name">Summer and crossbows</span></div>
+                <div class="content"><div class="folder-icon" onclick="open_album('Summer and crossbows');"></div><span class="album-name">Summer and crossbows</span></div>
               </div>
               <div class="file album">
-                <div class="content"><div class="folder-icon"></div><span class="album-name">Homework</span></div>
+                <div class="content"><div class="folder-icon" onclick="open_album('Homework');"></div><span class="album-name">Homework</span></div>
               </div>
               <div class="file album">
-                <div class="content"><div class="folder-icon"></div><span class="album-name">Photos</span></div>
+                <div class="content"><div class="folder-icon" onclick="open_album('Photos');"></div><span class="album-name">Photos</span></div>
               </div>
               <div class="file album">
-                <div class="content"><div class="folder-icon"></div><span class="album-name">Who let the dogs out</span></div>
+                <div class="content"><div class="folder-icon" onclick="open_album('Who let the dogs out');"></div><span class="album-name">Who let the dogs out</span></div>
+              </div>
+
+              <div class="file album">
+                <div class="content"><div class="plus-icon" onclick="on_album_create();"></div><span class="album-name">New album</span></div>
               </div>
             </div>
           </div>
@@ -78,17 +82,24 @@
       <div class="container">
         <div class="row">
           <div class="pos-12">
-            <h2 class="files-header videos">Your videos</h2>
+            <h2 class="files-header videos">Your videos <button class="text-action" onclick="upload_media()">Upload videos...</button></h2>
           </div>
         </div>
         <div class="row">
           <div class="pos-12">
             <div class="files videos" id="videos">
+
+              <div class="file album">
+                <div class="content"><div class="plus-icon" onclick="upload_media();"></div><span class="album-name">Add video...</span></div>
+              </div>
+
               <div class="file video">
                 <video class="content" controls="controls" >
                   <source src="assets/test_video.mp4" type="video/mp4;">
                 </video>
               </div>
+
+
             </div>
           </div>
           
@@ -100,20 +111,12 @@
       <div class="container">
         <div class="row">
           <div class="pos-12">
-            <h2 class="files-header">Album: Summer and crossbows</h2>
+            <h2 class="files-header">All media <button class="text-action" onclick="upload_media()">Upload more...</button></h2>
           </div>
         </div>
         <div class="row">
           <div class="pos-12">
             <div class="files" id="files">
-
-              <div class="file image" style="background-image: url(assets/images/user.webp);" id="img_../user.webp" onclick="open_image('Summer and crossbows')">
-                <div class="content" >
-                  <p class="filename">
-                    user.webp
-                  </p>
-                </div>
-              </div>
 
             </div>
           </div>
@@ -132,10 +135,48 @@
       </div>
     </div>
 
+    <div class="upload-popup popup closed" id="upload-popup">
+      <div class="drop-area" id="drop-area" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p class="greet_info">Drag&drop one or more files to this <i>drop zone</i></p>
+
+        <div class="files-form-wrap">
+          <div class="container ">
+            <div class="row">
+              <div class="pos-12">
+                <form class="files-form" id="files-form" onsubmit="send_files(event)">
+
+                  <h2 style="margin-bottom: 2rem;">Your files:</h2>
+                  <input type="file" class="file_input" id="files_input" multiple accept="image/*" onchange="handleFiles(this.files)">
+                  <label for="files_input" class="l-button">Pick files...</label>
+
+                  <input type="submit" value="Upload...">
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <img src="assets/images/user.webp" alt="" id="buffer-img">
+
+    <script src="assets/scripts/get_auth_token.js"></script>
+    <script src="assets/scripts/api.js"></script>
+
+    <script type="module">
+      verify_token(get_auth_token())
+      .then(is_valid => {
+          if (!is_valid)
+              location.assign(`${PREFIX}/login.html`);
+      })
+    </script>
+
+    <script src="assets/scripts/logout.js"></script>
 
     <script src="assets/scripts/script.js"></script>
     <script src="assets/scripts/drag.js"></script>
     <script src="assets/scripts/folder.js"></script>
+    <script src="assets/scripts/dragdrop.js"></script>
   </body>
 </html>

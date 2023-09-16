@@ -47,7 +47,7 @@ function open_image(id) {
     elem.classList.remove('closed');
     
     const bgelem = document.getElementById("zoom-popup-image");
-    let url = `/assets/images/fileimg/${img_name}`;
+    let url = `assets/images/fileimg/${img_name}`;
     update_zoom_pos(0.0, 0.0, 0.0)
     bgelem.src = url;
     let size = get_img_size(url);
