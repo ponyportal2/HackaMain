@@ -2,8 +2,21 @@ from sqlalchemy import text
 from sql_connection import conn
 import random
 
+
+def commit_changes(func):
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        conn.commit()
+        return result
+        # print("Commit")
+    return wrapper
+
+@commit_changes
 def sql(string):
-    return conn.execute(text(string))
+    try:
+        return conn.execute(text(string))
+    except Exception as e:
+        print(f"Can't do that\n error discription: {e}")
 
 def sql_token_exists_in_db(token):
     result = sql(f"select EXISTS(select token from session where token = '{token}')").scalar()
@@ -29,6 +42,7 @@ def sql_set_user_auth_status(username, status):
     
 
 def sql_get_all_user_pictures_with_pattern(username, pattern):
+    pattern = str(pattern)
     parsed = pattern.replace('*', '%')
     result = sql(f"select p.path from pictures p join users u on (p.user_id = u.id) where u.name = '{username}' and p.path like '{parsed}'").fetchall()
     return result
@@ -59,7 +73,7 @@ def sql_remove_image_location(filename):
 
 def sql_change_avatar(username, filename):
     id_user = sql(f"select id from users where name = '{username}'").scalar()
-    sql(f"update pictures set ava_path = '{filename}' where user_id = '{id_user}'")
+    sql(f"update avatar set ava_path = '{filename}' where user_id = {id_user}")
 
 def sql_get_avatar(username):
     id_user = sql(f"select id from users where name = '{username}'").scalar()
@@ -83,3 +97,4 @@ def print_table(table_name):
     avatar
     '''
     print( sql(f"select * from {table_name}").fetchall())
+    print("Len:",len(sql(f"select * from {table_name}").fetchall()))

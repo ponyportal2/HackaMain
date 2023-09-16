@@ -1,6 +1,9 @@
 import os
 import time
-from flask import Flask, request, jsonify
+import requests
+import json
+from flask import Flask, request, jsonify, send_file, redirect, url_for, session, render_template, abort
+from authlib.integrations.flask_client import OAuth
 
 from sql_main import main_sql_func
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -50,7 +53,7 @@ def register():
         sql_add_user(username, generate_password_hash(password))
         return jsonify({'status': 'success'})
 
-@app.route("/api/verify_token/", methods=["POST"]) # TESTED
+@app.route("/api/verify_token/", methods=["POST"]) # WORKS
 def verify_token():
     # input: {token}
     data = request.json
@@ -58,17 +61,14 @@ def verify_token():
     
     token = data.get('token')
     if sql_token_exists_in_db(token) == True:
-        print("YES")
-        return jsonify({'status': 'valid'})
+        username = sql_token_to_user(data.get('token'))
+        return jsonify({'status': 'valid', 'user': 'username'})
     else:
-        print("NO")
         return jsonify({'status': 'invalid'})
 
-@app.route("/api/upload_file/", methods=["POST"]) # NOT_TESTED
+@app.route("/api/upload_file/", methods=["POST"]) # WORKS
 def upload_file():
     # input: {token, filename} , file
-    # data_error_check(data)
-
     if 'file' not in request.files:
         flash('No file part')
         return jsonify({'status': 'error'}), 400 # No file part
@@ -87,27 +87,33 @@ def upload_file():
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     if file and allowed_file(file_path):
-        unique_file_path = secure_filename(file_path)
+        print("\n"+ file_path+"\n")
         with open(file_path, "wb") as fs:
             fs.write(file)
+        sql_post_image_location(username, file_path)
         return jsonify({'status': 'success'}), 200
 
-@app.route("/api/mv_file/", methods=["POST"]) # NOT_TESTED
+@app.route("/api/mv_file/", methods=["POST"]) # WORKS
 def mv_file():
     # input: {token, filename_from, filename_into}
     data = request.json
     data_error_check(data)
 
-    username = sql_token_to_user(data.get('token'))
-    file_from = username + data.get('filename_from')
-    file_to = username + data.get('filename_into')
+    # username = sql_token_to_user(data.get('token'))
+    username = "a"
+    file_from = username + "/" + data.get('filename_from')
+    file_to = username + "/" + data.get('filename_into')
     os.makedirs(os.path.dirname(file_to), exist_ok=True)
-    shutil.move(file_from, file_to)
-    os.remove(file_from)
-    sql_change_image_location(file_from, file_to)
-    return jsonify({'status': 'success'}), 200
+    try:
+        shutil.move(file_from, file_to)
+        sql_change_image_location(file_from, file_to)
+        return jsonify({'status': 'success'}), 200
+    except:
+        if not os.listdir(os.path.dirname(file_to)):
+            os.rmdir(os.path.dirname(file_to))
+        return jsonify({'status': 'no_from_file'}), 200
 
-@app.route("/api/del_file/", methods=["POST"]) # NOT_TESTED
+@app.route("/api/del_file/", methods=["POST"]) # WORKS
 def del_file():
     # input: {token, filename}
     data = request.json
@@ -119,25 +125,30 @@ def del_file():
     sql_remove_image_location(file_name)
     return jsonify({'status': 'success'}), 200
 
-@app.route("/api/get_all_files/", methods=["POST"]) # NOT_TESTED
+@app.route("/api/get_all_files/", methods=["POST"]) # WORKS
 def get_all_files():
     # {token, pattern} (паттерн по типу \*/\*.jpg и т.п.)
     data = request.json
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    return jsonify(sql_get_all_user_pictures_with_pattern(username, data.get('pattern')))
+    print_table("users")
+    print_table("pictures")
+    initial = sql_get_all_user_pictures_with_pattern(username, data.get('pattern'))
+    to_return = [item[0] for item in initial]
+    print(to_return)
+    return jsonify({'returned': to_return})
 
-@app.route("/api/get_all_folders/", methods=["POST"]) # NOT_TESTED
+@app.route("/api/get_all_folders/", methods=["POST"]) # WORKS
 def get_all_folders():
     # {token}
     data = request.json
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    return list_folders_in_directory(username)
+    return jsonify({'returned': list_folders_in_directory(username)})
 
-@app.route("/api/set_avatar_pic/", methods=["POST"]) # NOT_TESTED
+@app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
 def set_avatar_pic():
     # {token, filename}
     data = request.json
@@ -145,39 +156,108 @@ def set_avatar_pic():
 
     username = sql_token_to_user(data.get('token'))
     filename = data.get('filename')
-    sql_change_avatar(username, username + "/" + filename) # ????
 
+    sql_change_avatar(username, username + "/" + filename) # ????
     return jsonify({'status': 'success'}), 200
 
-@app.route("/api/get_avatar_pic/", methods=["POST"]) # NOT_TESTED
+@app.route("/api/get_avatar_pic/", methods=["POST"]) # WORKS
 def get_avatar_pic():
     # {token}
     data = request.json
     data_error_check(data)
     username = sql_token_to_user(data.get('token'))
 
-    return sql_get_avatar(username)
+    return jsonify({'returned': sql_get_avatar(username)})
 
-@app.route("/api/logout/", methods=["POST"])
+@app.route("/api/logout/", methods=["POST"]) # TESTED
 def logout():
     # {token}
     data = request.json
     data_error_check(data)
     token = data.get('token')
+    sql_delete_token(token)
+    return jsonify({'status': 'success'}), 200
 
-    return sql_delete_token(token)
+@app.route("/api/images/<path:kartinka>", methods=["GET"])
+def get_image(kartinka):
+    token = ""
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        token = auth_header.split("Bearer ")[1]
+
+    if sql_token_exists_in_db(token) == True:
+        pictures = sql_get_all_user_pictures_with_pattern(sql_token_to_user(token))
+        if kartinka in pictures:
+            image_path = os.path.join(kartinka)
+            if not os.path.exists(image_path):
+                return jsonify({'status': 'error'}), 400 # No such file
+            return send_file(image_path, mimetype='image/jpeg')
+        else: 
+            return jsonify({'status': 'invalid_token'}), 400 # No file part
+    else:
+        return jsonify({'status': 'no_token_found'}), 400 # No file part
+
+# AUTH
+appConf = {
+    "OAUTH2_CLIENT_ID": "116203304654-fp8noi61ff6kdo5gnu40b7d41nbojn6b.apps.googleusercontent.com",
+    "OAUTH2_CLIENT_SECRET": "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",
+    "OAUTH2_META_URL": "https://accounts.google.com/.well-known/openid-configuration",
+    "FLASK_SECRET": "91db5be4-d545-4a28-9212-5b03b642bbab",
+    "FLASK_PORT": 5000
+}
+
+app.secret_key = appConf.get("FLASK_SECRET")
+
+oauth = OAuth(app)
+
+oauth.register(
+  name="hackmedia",
+  client_id=appConf.get("OAUTH2_CLIENT_ID"),
+  client_secret=appConf.get("OAUTH2_CLIENT_SECRET"),
+  client_kwargs={
+    "scope": "openid profile email",
+    },
+    server_metadata_url=f'{appConf.get("OAUTH2_META_URL")}',
+    )
+# -----
+
+# AUTH_APP_ROUTES:
+@app.route("/home")
+def home():
+  return render_template("home.html", session=session.get("user"), info=json.dumps(session.get("user"), indent=4))
+
+@app.route("/signin-google")
+def googleCallback():
+  token = oauth.hackmedia.authorize_access_token()
+  session["user"] = token
+  return redirect(url_for("home"))
+
+
+@app.route("/google-login")
+def googleLogin():
+  if "user" in session:
+      abort(404)
+  return oauth.hackmedia.authorize_redirect(redirect_uri=url_for("googleCallback", _external=True))
+  
+@app.route("/logauth")
+def logauth():
+    session.pop("user", None)
+    return redirect(url_for("home"))
+# --------
+
 
 # Functions:
 
-def allowed_file(filename): # NOT_TESTED
+def allowed_file(filename): 
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'bmp', 'mp4'}
     file_extension = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
     return '.' in filename and file_extension in ALLOWED_EXTENSIONS
 
-def list_folders_in_directory(directory_path): # NOT_TESTED
+def list_folders_in_directory(directory_path): 
     try:
         items = os.listdir(directory_path)
         folders = [item for item in items if os.path.isdir(os.path.join(directory_path, item))]
+        return folders
     except OSError as e:
         print(f"Error: {e}")
         return []
@@ -188,4 +268,4 @@ def data_error_check(data):
         return jsonify({'status': 'error'}), 400 # No JSON data provided
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=appConf.get("FLASK_PORT"))
