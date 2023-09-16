@@ -139,7 +139,7 @@ def get_all_files():
     username = sql_token_to_user(data.get('token'))
     print_table("users")
     print_table("pictures")
-    initial = sql_get_all_user_pictures_with_pattern(username, data.get('pattern'))
+    initial = sql_get_all_user_pictures_with_pattern(username, username + '/' +  data.get('pattern'))
     to_return = [item[0] for item in initial]
     print(to_return)
     return jsonify({'returned': to_return})

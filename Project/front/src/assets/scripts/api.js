@@ -79,3 +79,16 @@ async function get_images() {
     return json_request('/api/get_all_files/', { token: get_auth_token(), pattern: '*' })
     .then(response => response.json());
 }
+
+async function get_images_for_album(album) {
+    return json_request('/api/get_all_files/', { 
+        token: get_auth_token(), 
+        pattern: `${album}/*` 
+    })
+    .then(response => response.json());
+}
+
+async function get_folders() {
+    return json_request('/api/get_all_folders/', { token: get_auth_token(), pattern: '*' })
+    .then(response => response.json());
+}

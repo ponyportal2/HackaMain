@@ -1,7 +1,7 @@
 function open_album(name) {
-    location.assign(`/album.html?name=${encodeURI(name)}`);
+    location.assign(`/static/app/album.html?name=${encodeURI(name)}`);
 }
 
 function on_album_create() {
-    location.assign(`/album.html?name=123`);
+    location.assign(`/static/app/album.html?name=123`);
 }

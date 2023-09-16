@@ -18,7 +18,7 @@
         <div class="row">
           <div class="pos-6">
             <div class="menu-items-wrapper">
-                <a href="/">&lt;-</a>
+                <a href="/static/app/index.html">&lt;-</a>
               <p href="#">
                 Album: <span class="album-name"></span>
               </p>
@@ -31,14 +31,14 @@
               
               <div class="user-panel-data" onclick="userpanel_click();" style="cursor: pointer;">
                 <span class="user-avatar">
-                  <img src="assets/images/user.webp" alt="User">
+                  <img class="user-avatar img-load-assist" data-src="/assets/images/user.webp" src="" alt="User">
                 </span>
-                <p class="user-name">verda_quinoa</p>
+                <p class="user-name"></p>
               </div>
 
               <div class="dropdown-menu closing closed" id="user-dropdown">
                 <a href="#" class="btn-link pick-image">Change profile picture</a>
-                <a href="#" class="btn-link logout">Log out</a>
+                <a href="#" class="btn-link logout" onclick="trigger_logout(event)">Log out</a>
               </div>
             </div>
           </div>
@@ -46,24 +46,20 @@
       </div>
     </div>
 
+
+
+
+
     <div class="files-panel">
       <div class="container">
         <div class="row">
           <div class="pos-12">
-            <h2 class="files-header">Album: <span class="album-name"></span></h2>
+            <h2 class="files-header">All media <button class="text-action" onclick="open_dragdrop()">Upload more...</button></h2>
           </div>
         </div>
         <div class="row">
           <div class="pos-12">
             <div class="files" id="files">
-
-              <div class="file image" style="background-image: url(assets/images/user.webp);" id="img_../user.webp" onclick="open_image('Summer and crossbows')">
-                <div class="content" >
-                  <p class="filename">
-                    user.webp
-                  </p>
-                </div>
-              </div>
 
             </div>
           </div>
@@ -71,6 +67,11 @@
         </div>
       </div>
     </div>
+
+
+
+
+
 
     
     <div class="zoom-popup popup closed" id="zoom-popup">
@@ -82,12 +83,70 @@
       </div>
     </div>
 
-    <img src="/assets/images/user.webp" alt="" id="buffer-img">
 
-    <script src="/assets/scripts/script.js"></script>
-    <script src="/assets/scripts/drag.js"></script>
-    <script src="/assets/scripts/folder.js"></script>
 
-    <script src="/assets/scripts/album.js"></script>
+
+
+
+
+
+
+
+    <div class="upload-popup popup closed" id="upload-popup">
+      <div class="drop-area" id="drop-area" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p class="greet_info">Drag&drop one or more files to this <i>drop zone</i></p>
+        <button class="greet_info button" onclick="close_dragdrop();">Close</button>
+
+        <div class="files-form-wrap">
+          <div class="container ">
+            <div class="row">
+              <div class="pos-12">
+                <form class="files-form" id="files-form" onsubmit="send_files(event)">
+                  <button onclick="close_dragdrop(); event.preventDefault()">Cancel</button>
+
+                  <h2 style="margin-bottom: 2rem;">Your files:</h2>
+                  <input type="file" class="file_input" id="files_input" multiple accept="image/*" onchange="handleFiles(this.files)">
+                  <label for="files_input" class="l-button">Pick files...</label>
+
+                  <input type="submit" value="Upload...">
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <script src="assets/scripts/get_auth_token.js"></script>
+    <script src="assets/scripts/api.js"></script>
+
+    <script type="module">
+      verify_token(get_auth_token())
+      .then(is_valid => {
+          console.log("Token: ", get_auth_token());
+          console.log("Is valid: ", is_valid);
+          if (!is_valid)
+              location.assign(`${PREFIX}/login.html`);
+      })
+    </script>
+
+    <script src="assets/scripts/logout.js"></script>
+
+    <script src="assets/scripts/script.js"></script>
+    <script src="assets/scripts/drag.js"></script>
+    <script src="assets/scripts/folder.js"></script>
+    <script src="assets/scripts/dragdrop.js"></script>
+    <script src="assets/scripts/main_server_interaction.js"></script>
+    <script type="module">mservi_init_album(new URLSearchParams(window.location.search).get('name'));</script>
   </body>
 </html>

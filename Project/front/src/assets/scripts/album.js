@@ -6,6 +6,7 @@ let global_album_name;
     console.log(queryString);
     // ?product=shirt&color=blue&newuser&size=m
     const urlParams = new URLSearchParams(queryString);
+    
     global_album_name = urlParams.get('name');
 })();
 

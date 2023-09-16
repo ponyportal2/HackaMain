@@ -47,8 +47,11 @@ function load_images() {
     return Promise.all(promises);
 }
 
-function load_user_files() {
-    return get_images()
+function load_user_files(album) {
+
+    let images = album ? get_images_for_album(album) : get_images();
+
+    return images
         .then(data => {
             const files_elem = document.getElementById("files");
             console.log('GOT USER FILES: ', data);
@@ -60,10 +63,32 @@ function load_user_files() {
         });
 }
 
-(() => {
+function load_user_albums() {
+    return get_folders()
+        .then(data => {
+            const albums_elem = document.getElementById("albums");
+            console.log('GOT USER FOLDERS: ', data);
+            data.returned.forEach(name => {
+                let html = `<div class="file album"><div class="content"><div class="folder-icon" onclick="open_album('${name}');"></div><span class="album-name">${name}</span></div></div>`;
+
+                albums_elem.appendChild(createElementFromHTML(html));
+            });
+        });
+}
+
+function mservi_init() {
     let a = update_username();
     let b = update_avatar();
     let c = load_user_files();
+    let d = load_user_albums();
+
+    Promise.all([a, b, c, d]).then(() => load_images());
+}
+
+function mservi_init_album(name) {
+    let a = update_username();
+    let b = update_avatar();
+    let c = load_user_files(name);
 
     Promise.all([a, b, c]).then(() => load_images());
-})();
+}
