@@ -67,8 +67,6 @@ def verify_token():
 @app.route("/api/upload_file/", methods=["POST"]) # NOT_TESTED
 def upload_file():
     # input: {token, filename} , file
-    # data_error_check(data)
-
     if 'file' not in request.files:
         flash('No file part')
         return jsonify({'status': 'error'}), 400 # No file part
@@ -98,7 +96,8 @@ def mv_file():
     data = request.json
     data_error_check(data)
 
-    username = sql_token_to_user(data.get('token'))
+    username = sql_token_to_user(data.get('token')) # 
+    print("\nABOBA\n")
     file_from = username + data.get('filename_from')
     file_to = username + data.get('filename_into')
     os.makedirs(os.path.dirname(file_to), exist_ok=True)
@@ -135,7 +134,7 @@ def get_all_folders():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    return list_folders_in_directory(username)
+    return jsonify({'returned': list_folders_in_directory(username)})
 
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # NOT_TESTED
 def set_avatar_pic():
@@ -145,6 +144,7 @@ def set_avatar_pic():
 
     username = sql_token_to_user(data.get('token'))
     filename = data.get('filename')
+
     sql_change_avatar(username, username + "/" + filename) # ????
 
     return jsonify({'status': 'success'}), 200
@@ -158,14 +158,14 @@ def get_avatar_pic():
 
     return sql_get_avatar(username)
 
-@app.route("/api/logout/", methods=["POST"])
+@app.route("/api/logout/", methods=["POST"]) # TESTED
 def logout():
     # {token}
     data = request.json
     data_error_check(data)
     token = data.get('token')
-
-    return sql_delete_token(token)
+    sql_delete_token(token)
+    return jsonify({'status': 'success'}), 200
 
 # Functions:
 
@@ -178,6 +178,7 @@ def list_folders_in_directory(directory_path): # NOT_TESTED
     try:
         items = os.listdir(directory_path)
         folders = [item for item in items if os.path.isdir(os.path.join(directory_path, item))]
+        return folders
     except OSError as e:
         print(f"Error: {e}")
         return []
