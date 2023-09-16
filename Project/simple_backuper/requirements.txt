@@ -1,0 +1,9 @@
+telebot
+psycopg2-binary
+sqlalchemy
+flask
+jsonify
+pillow
+authlib
+requests
+pyjwt

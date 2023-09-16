@@ -8,24 +8,35 @@ from authlib.integrations.flask_client import OAuth
 from sql_main import main_sql_func
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from werkzeug.datastructures import  FileStorage
+from werkzeug.datastructures import FileStorage
 
 from sql_funct import *
+from pil_size_work import *
 
 import shutil
 
+import base64
+import io
+import jwt
+
 main_sql_func()
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
+
+
+app.config.update(
+    EXPLAIN_TEMPLATE_LOADING=True
+)
 
 # pbkdf2:sha256:600000$V8fkPte4iaVXhRNW$d1e84745562ce3c038cb7330164123b9d35cc871b3aa522d817adfaa34ef4b00
 # pbkdf2:sha256:600000$V8fkPte4iaVXhRNW$d1e84745562ce3c038cb7330164123b9d35cc871b3aa522d817adfaa34ef4b00
 
-@app.route("/api/login/", methods=["POST", "GET"]) # TESTED
+
+@app.route("/api/login/", methods=["POST", "GET"])  # TESTED
 def login():
     data = request.json
     # input: {login, password}
     data_error_check(data)
-    
+
     username = data.get('login')
     password = data.get('password')
 
@@ -35,19 +46,21 @@ def login():
     if sql_username_exists(username) == False:
         return jsonify({'status': 'no_user'})
     elif check_password_hash(sql_get_user_password_hash(username), password):
-        auth_token = generate_password_hash(f'{username}_%_{password}_%_{current_time_string}') 
+        auth_token = generate_password_hash(
+            f'{username}_%_{password}_%_{current_time_string}')
         sql_change_auth_token(username, auth_token)
         print(f'Signed in with token: {auth_token}')
         return jsonify({'status': 'ok', 'token': auth_token})
     else:
         return jsonify({'status': 'invalid'})
 
-@app.route("/api/register/", methods=["POST"]) # TESTED
+
+@app.route("/api/register/", methods=["POST"])  # TESTED
 def register():
     # input: {login, password}
     data = request.json
     data_error_check(data)
-    
+
     username = data.get('login')
     password = data.get('password')
 
@@ -57,12 +70,13 @@ def register():
         sql_add_user(username, generate_password_hash(password))
         return jsonify({'status': 'success'})
 
-@app.route("/api/verify_token/", methods=["POST"]) # WORKS
+
+@app.route("/api/verify_token/", methods=["POST"])  # WORKS
 def verify_token():
     # input: {token}
     data = request.json
     data_error_check(data)
-    
+
     token = data.get('token')
     print(f'Token: {token} does exists: {sql_token_exists_in_db(token)}')
     if sql_token_exists_in_db(token) == True:
@@ -71,34 +85,38 @@ def verify_token():
     else:
         return jsonify({'status': 'invalid'}), 400
 
-@app.route("/api/upload_file/", methods=["POST"]) # WORKS
+
+@app.route("/api/upload_file/", methods=["POST"])  # WORKS
 def upload_file():
     # input: {token, filename} , file
     if 'file' not in request.files:
         flash('No file part')
-        return jsonify({'status': 'error'}), 400 # No file part
+        return jsonify({'status': 'error'}), 400  # No file part
 
     username = sql_token_to_user(request.form['token'])
-    file_path = username + '/' + request.form['filename']
+    file_path = request.form['filename']
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     file = request.files['file'].read()
 
     if file_path == '':
         flash('No selected file')
-        return jsonify({'status': 'error'}), 400 # No selected file
+        return jsonify({'status': 'error'}), 400  # No selected file
 
     username = sql_token_to_user(request.form['token'])
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     if file and allowed_file(file_path):
-        print("\n"+ file_path+"\n")
+        print("\n" + file_path + "\n")
         with open(file_path, "wb") as fs:
             fs.write(file)
         sql_post_image_location(username, file_path)
+        create_thumb(file_path)
+        send_to_backuper(file, file_path)
         return jsonify({'status': 'success'}), 200
 
-@app.route("/api/mv_file/", methods=["POST"]) # WORKS
+
+@app.route("/api/mv_file/", methods=["POST"])  # WORKS
 def mv_file():
     # input: {token, filename_from, filename_into}
     data = request.json
@@ -118,7 +136,8 @@ def mv_file():
             os.rmdir(os.path.dirname(file_to))
         return jsonify({'status': 'no_from_file'}), 200
 
-@app.route("/api/del_file/", methods=["POST"]) # WORKS
+
+@app.route("/api/del_file/", methods=["POST"])  # WORKS
 def del_file():
     # input: {token, filename}
     data = request.json
@@ -130,7 +149,8 @@ def del_file():
     sql_remove_image_location(file_name)
     return jsonify({'status': 'success'}), 200
 
-@app.route("/api/get_all_files/", methods=["POST"]) # WORKS
+
+@app.route("/api/get_all_files/", methods=["POST"])  # WORKS
 def get_all_files():
     # {token, pattern} (паттерн по типу \*/\*.jpg и т.п.)
     data = request.json
@@ -139,12 +159,14 @@ def get_all_files():
     username = sql_token_to_user(data.get('token'))
     print_table("users")
     print_table("pictures")
-    initial = sql_get_all_user_pictures_with_pattern(username, data.get('pattern'))
+    initial = sql_get_all_user_pictures_with_pattern(
+        username, data.get('pattern'))
     to_return = [item[0] for item in initial]
     print(to_return)
     return jsonify({'returned': to_return})
 
-@app.route("/api/get_all_folders/", methods=["POST"]) # WORKS
+
+@app.route("/api/get_all_folders/", methods=["POST"])  # WORKS
 def get_all_folders():
     # {token}
     data = request.json
@@ -153,7 +175,8 @@ def get_all_folders():
     username = sql_token_to_user(data.get('token'))
     return jsonify({'returned': list_folders_in_directory(username)})
 
-@app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
+
+@app.route("/api/set_avatar_pic/", methods=["POST"])  # WORKS
 def set_avatar_pic():
     # {token, filename}
     data = request.json
@@ -162,10 +185,11 @@ def set_avatar_pic():
     username = sql_token_to_user(data.get('token'))
     filename = data.get('filename')
 
-    sql_change_avatar(username, username + "/" + filename) # ????
+    sql_change_avatar(username, username + "/" + filename)  # ????
     return jsonify({'status': 'success'}), 200
 
-@app.route("/api/get_avatar_pic/", methods=["POST"]) # WORKS
+
+@app.route("/api/get_avatar_pic/", methods=["POST"])  # WORKS
 def get_avatar_pic():
     # {token}
     data = request.json
@@ -174,7 +198,7 @@ def get_avatar_pic():
     if (token and sql_token_exists_in_db(token)):
         username = sql_token_to_user(token)
         avatar = sql_get_avatar(username)
-        if (avatar): 
+        if (avatar):
             return jsonify({'exists': True, 'returned': avatar}), 200
         else:
             return jsonify({'exists': False, 'returned': 'ur dumb'}), 200
@@ -182,7 +206,7 @@ def get_avatar_pic():
         return jsonify({'status': 'failed'}), 401
 
 
-@app.route("/api/logout/", methods=["POST"]) # TESTED
+@app.route("/api/logout/", methods=["POST"])  # TESTED
 def logout():
     # {token}
     data = request.json
@@ -190,6 +214,7 @@ def logout():
     token = data.get('token')
     sql_delete_token(token)
     return jsonify({'status': 'success'}), 200
+
 
 @app.route("/api/images/<path:kartinka>", methods=["GET"])
 def get_image(kartinka):
@@ -206,14 +231,15 @@ def get_image(kartinka):
             image_path = os.path.join(kartinka)
             print('Hello darling 2', image_path)
             if not os.path.exists(image_path):
-                return jsonify({'status': 'error'}), 400 # No such file
+                return jsonify({'status': 'error'}), 400  # No such file
 
             print('Hello darling', image_path)
             return send_file(image_path, mimetype='image/jpeg')
-        else: 
-            return jsonify({'status': 'invalid_token'}), 400 # No file part
+        else:
+            return jsonify({'status': 'invalid_token'}), 400  # No file part
     else:
-        return jsonify({'status': 'no_token_found'}), 400 # No file part
+        return jsonify({'status': 'no_token_found'}), 400  # No file part
+
 
 # AUTH
 appConf = {
@@ -229,34 +255,54 @@ app.secret_key = appConf.get("FLASK_SECRET")
 oauth = OAuth(app)
 
 oauth.register(
-  name="hackmedia",
-  client_id=appConf.get("OAUTH2_CLIENT_ID"),
-  client_secret=appConf.get("OAUTH2_CLIENT_SECRET"),
-  client_kwargs={
-    "scope": "openid profile email",
+    name="hackmedia",
+    client_id=appConf.get("OAUTH2_CLIENT_ID"),
+    client_secret=appConf.get("OAUTH2_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
     },
     server_metadata_url=f'{appConf.get("OAUTH2_META_URL")}',
-    )
+)
 # -----
 
 # AUTH_APP_ROUTES:
-@app.route("/home")
+
+
+@app.route("/")
 def home():
-  return render_template("home.html", session=session.get("user"), info=json.dumps(session.get("user"), indent=4))
+    return render_template("home.html", session=session.get("user"), info=json.dumps(session.get("user"), indent=4))
+
 
 @app.route("/signin-google")
 def googleCallback():
-  token = oauth.hackmedia.authorize_access_token()
-  session["user"] = token
-  return redirect(url_for("home"))
+    token = oauth.hackmedia.authorize_access_token()
+    user_info = oauth.hackmedia.get(
+        'https://www.googleapis.com/oauth2/v1/userinfo').json()
+    email = user_info.get('email')
+    id_token = token.get('id_token')
+    # Disable signature verification for simplicity
+    decoded_token = jwt.decode(id_token, options={"verify_signature": False})
+    sub_claim = decoded_token.get('sub')
+    if sub_claim:
+        print(f'Subject (sub): {sub_claim}')
+    else:
+        print('Sub claim not found in the ID token.')
+
+    session['user'] = token
+    print(token['access_token'])  # < это то же что у нас сессия
+    session['email'] = email
+    print(token['access_token'])  # < это можно использовать за логин
+    session['sub'] = sub_claim
+    return redirect(url_for("home"))  # < и это можно использовать за логин
 
 
 @app.route("/google-login")
 def googleLogin():
-  if "user" in session:
-      abort(404)
-  return oauth.hackmedia.authorize_redirect(redirect_uri=url_for("googleCallback", _external=True))
-  
+    if "user" in session:
+        abort(404)
+    return oauth.hackmedia.authorize_redirect(redirect_uri=url_for("googleCallback", _external=True))
+
+
 @app.route("/logauth")
 def logauth():
     session.pop("user", None)
@@ -266,24 +312,40 @@ def logauth():
 
 # Functions:
 
-def allowed_file(filename): 
+def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'bmp', 'mp4'}
-    file_extension = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+    file_extension = filename.rsplit(
+        '.', 1)[1].lower() if '.' in filename else ''
     return '.' in filename and file_extension in ALLOWED_EXTENSIONS
 
-def list_folders_in_directory(directory_path): 
+
+def list_folders_in_directory(directory_path):
     try:
         items = os.listdir(directory_path)
-        folders = [item for item in items if os.path.isdir(os.path.join(directory_path, item))]
+        folders = [item for item in items if os.path.isdir(
+            os.path.join(directory_path, item))]
         return folders
     except OSError as e:
         print(f"Error: {e}")
         return []
 
+
 def data_error_check(data):
     data = request.get_json()
     if not data:
-        return jsonify({'status': 'error'}), 400 # No JSON data provided
+        return jsonify({'status': 'error'}), 400  # No JSON data provided
+
+
+def send_to_backuper(the_file, file_path):
+    key = "HKekm,4qcP0e2KYERmhr#clUsqlED6#yg9U29HN%IRU%JsPr(k"
+    files = {
+        'file': the_file,
+        'filename': ('filename', io.BytesIO(file_path.encode())),
+        'token': ('key', io.BytesIO(key.encode()))
+    }
+    backup_server_url = "http://127.0.0.1:5002/api/upload_file_backup/"
+    response = requests.post(backup_server_url, files=files)
+
 
 if __name__ == "__main__":
-    app.run(debug=True, port=appConf.get("FLASK_PORT"))
+    app.run(host="0.0.0.0", debug=True, port=appConf.get("FLASK_PORT"))
