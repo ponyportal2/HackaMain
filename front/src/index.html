@@ -56,7 +56,7 @@
           <div class="pos-12">
             <div class="files albums" id="albums">
               <div class="file album">
-                <div class="content"><div class="folder-icon"></div><span class="album-name">Summer and crossbows</span></div>
+                <div class="content"><div class="folder-icon" onclick="open_album(this.id);" id="folder_1"></div><span class="album-name">Summer and crossbows</span></div>
               </div>
               <div class="file album">
                 <div class="content"><div class="folder-icon"></div><span class="album-name">Homework</span></div>
@@ -107,7 +107,7 @@
           <div class="pos-12">
             <div class="files" id="files">
 
-              <div class="file image" style="background-image: url(assets/images/user.webp);" id="img_../user.webp" onclick="open_image(this.id)">
+              <div class="file image" style="background-image: url(assets/images/user.webp);" id="img_../user.webp" onclick="open_image('Summer and crossbows')">
                 <div class="content" >
                   <p class="filename">
                     user.webp
@@ -136,5 +136,6 @@
 
     <script src="assets/scripts/script.js"></script>
     <script src="assets/scripts/drag.js"></script>
+    <script src="assets/scripts/folder.js"></script>
   </body>
 </html>
