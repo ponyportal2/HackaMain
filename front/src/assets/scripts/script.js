@@ -7,7 +7,8 @@ const filenames = [
     "9KxPXaSBW9Q.webp",
     "9eO6maQiFGo.webp",
     "9fbdd26407902676b370d3efb789dde9.webp",
-    "mount.jpeg",
+    "mount.webp",
+    "car.webp",
 ];
 
 function createElementFromHTML(htmlString) {

@@ -5,30 +5,34 @@ function get_img_size(src) {
 }
 
 
-let zoom = 1.0;
-
-let zoom_img_x = 0.0;
-let zoom_img_y = 0.0;
-
-let img_w = 0;
-let img_h = 0;
+var zoom_state = {
+    zoom: 1.0,
+    x: 0,
+    y: 0,
+    img_w: 0,
+    img_h: 0,
+};
 
 function update_zoom_pos(zoom_in, x, y) {
-    zoom = zoom_in;
-    zoom_img_x = x;
-    zoom_img_y = y;
-    // zoom_drag.style.left = pageX - zoom_drag.offsetWidth / 2 + 'px';
-    // zoom_drag.style.top = pageY - zoom_drag.offsetHeight / 2 + 'px';
+    zoom_state.zoom = zoom_in;
+    zoom_state.x = x;
+    zoom_state.y = y;
+    
     let zoom_image = document.getElementById('zoom-popup-image');
-    const ze = Math.pow(1.1, zoom);
-    // console.log("image size: ", img_w, img_h, zoom_img_x, zoom_img_y, ze);
-    zoom_image.style.backgroundPositionX = zoom_img_x - img_w*ze + 'px';
-    zoom_image.style.backgroundPositionY = zoom_img_y - img_h*ze + 'px';
-    zoom_image.style.backgroundSize = `${ze * 100}%`;
+    let ze = Math.pow(1.1, zoom_state.zoom);
+
+    zoom_image.style.left = zoom_state.x * ze - zoom_state.img_w * ze / 2 + 'px';
+    zoom_image.style.top = zoom_state.y * ze - zoom_state.img_h * ze / 2 + 'px';
+    zoom_image.style.width = `${zoom_state.img_w * ze}px`;
+    zoom_image.style.height = `${zoom_state.img_h * ze}px`;
 }
 
 function on_zoom(delta) {
-    update_zoom_pos(zoom + delta / 50., zoom_img_x, zoom_img_y);
+    if (isNaN(delta))
+        return;
+
+    let new_zoom = zoom_state.zoom + delta / 50.;
+    update_zoom_pos(new_zoom, zoom_state.x, zoom_state.y);
 }
 
 function close_image_zoom() {
@@ -44,11 +48,13 @@ function open_image(id) {
     
     const bgelem = document.getElementById("zoom-popup-image");
     let url = `/assets/images/fileimg/${img_name}`;
-    bgelem.style.backgroundImage = `url(${url})`
+    update_zoom_pos(0.0, 0.0, 0.0)
+    bgelem.src = url;
     let size = get_img_size(url);
-    img_w = size[0];
-    img_h = size[1];
-    update_zoom_pos(0.0, document.width / 2, document.height / 2)
+    zoom_state.img_w = size[0];
+    zoom_state.img_h = size[1];
+
+    update_zoom_pos(0.0, 0.0, 0.0)
 }
 
 let zoom_drag = document.getElementById('zoom-popup-drag');
@@ -60,7 +66,11 @@ zoom_drag.addEventListener("wheel", (event) => {
 }, {passive: false});
 
 function onMouseMove(event) {
-    update_zoom_pos(zoom, zoom_img_x + event.movementX, zoom_img_y + event.movementY)
+    if (isNaN(event.movementX) || isNaN(event.movementY))
+        return;
+
+    let ze = Math.pow(1.1, zoom_state.zoom);
+    update_zoom_pos(zoom_state.zoom, zoom_state.x + event.movementX / ze, zoom_state.y + event.movementY / ze);
 }
 
 zoom_drag.onmousedown = function(event) {

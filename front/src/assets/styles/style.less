@@ -351,12 +351,8 @@ body {
 }
 
 .zoom-image {
-    width: 100%;
-    height: 100%;
-
-    background-size: 80%;
-    background-position: center center;
-    background-repeat: no-repeat;
+    position: fixed;
+    transform: translate(50vw, 50vh);
 }
 
 .drag-area {
@@ -393,4 +389,56 @@ body {
 #buffer-img {
     position: fixed;
     left: -100%;
+}
+
+.login-panel {
+    &, .container, .row {
+        height: 100%;
+    }
+}
+
+.form-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+}
+
+.form {
+    margin: 2rem 0;
+    padding: 2rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    background-color: #333;
+}
+
+.form-hdr {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+input {
+    background-color: transparent;
+    border: 1px solid #eee;
+    padding: 0.5rem 1rem;
+    color: #eee;
+    border-radius: 1rem;
+    width: 100%;
+}
+
+input[type="submit"] {
+    transition: background-color 0.1s, color 0.1s;
+
+    background-color: #eee;
+    color: #333;
+    &:hover {
+        background-color: #eeeeee60;
+        cursor: pointer;
+    }
 }
