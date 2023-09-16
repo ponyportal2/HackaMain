@@ -13,7 +13,10 @@ def commit_changes(func):
 
 @commit_changes
 def sql(string):
-    return conn.execute(text(string))
+    try:
+        return conn.execute(text(string))
+    except Exception as e:
+        print(f"Can't do that\n error discription: {e}")
 
 def sql_token_exists_in_db(token):
     result = sql(f"select EXISTS(select token from session where token = '{token}')").scalar()
@@ -69,7 +72,7 @@ def sql_remove_image_location(filename):
 
 def sql_change_avatar(username, filename):
     id_user = sql(f"select id from users where name = '{username}'").scalar()
-    sql(f"update pictures set ava_path = '{filename}' where user_id = '{id_user}'")
+    sql(f"update avatar set ava_path = '{filename}' where user_id = {id_user}")
 
 def sql_get_avatar(username):
     id_user = sql(f"select id from users where name = '{username}'").scalar()

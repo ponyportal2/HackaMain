@@ -10,7 +10,7 @@ req:
 run:
 	${PY} model.py
 
-test: delete_base
+test:
 	${PY} sql_main.py
 
 clean: 

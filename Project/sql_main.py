@@ -32,7 +32,6 @@ def main_sql_func():
         sql_execute_list(list_index)
         
     #insert_tables(10)
-    #
     #print("BASE:")
     #print_table('users')
     #print(sql_username_exists('John'))
