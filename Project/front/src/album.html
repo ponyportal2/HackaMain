@@ -54,7 +54,7 @@
       <div class="container">
         <div class="row">
           <div class="pos-12">
-            <h2 class="files-header">All media <button class="text-action" onclick="open_dragdrop()">Upload more...</button></h2>
+            <h2 class="files-header"><span>Album: <span class="album-name"></span></span> <button class="text-action" onclick="open_dragdrop()">Upload more...</button></h2>
           </div>
         </div>
         <div class="row">
@@ -147,6 +147,7 @@
     <script src="assets/scripts/folder.js"></script>
     <script src="assets/scripts/dragdrop.js"></script>
     <script src="assets/scripts/main_server_interaction.js"></script>
+    <script src="assets/scripts/album.js"></script>
     <script type="module">mservi_init_album(new URLSearchParams(window.location.search).get('name'));</script>
   </body>
 </html>

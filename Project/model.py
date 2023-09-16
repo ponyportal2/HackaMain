@@ -79,7 +79,7 @@ def upload_file():
         return jsonify({'status': 'error'}), 400 # No file part
 
     username = sql_token_to_user(request.form['token'])
-    file_path = username + '/' + request.form['filename']
+    file_path = f'users/{username}/{request.form["filename"]}'
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
     file = request.files['file'].read()
@@ -95,7 +95,7 @@ def upload_file():
         print("\n"+ file_path+"\n")
         with open(file_path, "wb") as fs:
             fs.write(file)
-        sql_post_image_location(username, file_path)
+        sql_post_image_location(username, f'{request.form["filename"]}')
         return jsonify({'status': 'success'}), 200
 
 @app.route("/api/mv_file/", methods=["POST"]) # WORKS
@@ -104,14 +104,14 @@ def mv_file():
     data = request.json
     data_error_check(data)
 
-    # username = sql_token_to_user(data.get('token'))
-    username = "a"
-    file_from = username + "/" + data.get('filename_from')
-    file_to = username + "/" + data.get('filename_into')
+    user_id = sql_token_to_user_id(data.get('token'))
+    username = sql_token_to_user(data.get('token'))
+    file_from = f'users/{username}/{data.get("filename_from")}'
+    file_to = f'users/{username}/{data.get("filename_into")}'
     os.makedirs(os.path.dirname(file_to), exist_ok=True)
     try:
         shutil.move(file_from, file_to)
-        sql_change_image_location(file_from, file_to)
+        sql_change_image_location(user_id, data.get('filename_into'), data.get('filename_into'))
         return jsonify({'status': 'success'}), 200
     except:
         if not os.listdir(os.path.dirname(file_to)):
@@ -125,7 +125,7 @@ def del_file():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    file_name = username + '/' + data.get('filename')
+    file_name = f'users/{username}/{data.get("filename")}'
     os.remove(file_name)
     sql_remove_image_location(file_name)
     return jsonify({'status': 'success'}), 200
@@ -139,7 +139,7 @@ def get_all_files():
     username = sql_token_to_user(data.get('token'))
     print_table("users")
     print_table("pictures")
-    initial = sql_get_all_user_pictures_with_pattern(username, username + '/' +  data.get('pattern'))
+    initial = sql_get_all_user_pictures_with_pattern(username, data.get('pattern'))
     to_return = [item[0] for item in initial]
     print(to_return)
     return jsonify({'returned': to_return})
@@ -151,7 +151,7 @@ def get_all_folders():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    return jsonify({'returned': list_folders_in_directory(username)})
+    return jsonify({'returned': list_folders_in_directory(f'users/{username}')})
 
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
 def set_avatar_pic():
@@ -201,9 +201,9 @@ def get_image(kartinka):
     if sql_token_exists_in_db(token) == True:
         user = sql_token_to_user(token)
         print('Hello darling 4, user: ', user)
-        if sql_does_image_exist(kartinka):
+        if sql_does_image_exist(f'{user}/{kartinka}'):
             print('Hello darling 3')
-            image_path = os.path.join(kartinka)
+            image_path = os.path.join(f'users/{user}/{kartinka}')
             print('Hello darling 2', image_path)
             if not os.path.exists(image_path):
                 return jsonify({'status': 'error'}), 400 # No such file

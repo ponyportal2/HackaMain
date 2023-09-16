@@ -13,6 +13,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   </head>
   <body>
+
+
+
+
+
+
+
+
+
+
     <div class="top-panel">
       <div class="container">
         <div class="row">
@@ -45,6 +55,16 @@
       </div>
     </div>
 
+
+
+
+
+
+
+
+
+
+
     <div class="files-panel albums">
       <div class="container">
         <div class="row">
@@ -64,6 +84,15 @@
         </div>
       </div>
     </div>
+
+
+
+
+
+
+
+
+
 
     <div class="files-panel videos">
       <div class="container">
@@ -94,6 +123,14 @@
       </div>
     </div>
 
+
+
+
+
+
+
+
+
     <div class="files-panel">
       <div class="container">
         <div class="row">
@@ -107,12 +144,19 @@
 
             </div>
           </div>
-          
         </div>
       </div>
     </div>
 
     
+
+
+
+
+
+
+
+
     <div class="zoom-popup popup closed" id="zoom-popup">
       <div class="zoom-image-wrapper">
         <image class="zoom-image" id="zoom-popup-image" src="assets/images/user.webp"></image>
@@ -121,6 +165,16 @@
         <button class="popup-close" onclick="close_image_zoom()">Close image</button>
       </div>
     </div>
+
+
+
+
+
+
+
+
+
+
 
     <div class="upload-popup popup closed" id="upload-popup">
       <div class="drop-area" id="drop-area" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
@@ -148,6 +202,43 @@
       </div>
     </div>
 
+
+
+    <div class="create-album-popup popup closed" id="upload-popup">
+      <div class="drop-area" id="drop-area" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p class="greet_info">Drag&drop one or more files to this <i>drop zone</i></p>
+        <button class="greet_info button" onclick="close_dragdrop();">Close</button>
+
+        <div class="files-form-wrap">
+          <div class="container ">
+            <div class="row">
+              <div class="pos-12">
+                <form class="files-form" id="files-form" onsubmit="send_files(event)">
+                  <button onclick="close_dragdrop(); event.preventDefault()">Cancel</button>
+
+                  <h2 style="margin-bottom: 2rem;">Your files:</h2>
+                  <input type="file" class="file_input" id="files_input" multiple accept="image/*" onchange="handleFiles(this.files)">
+                  <label for="files_input" class="l-button">Pick files...</label>
+
+                  <input type="submit" value="Upload...">
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    
     <img src="assets/images/user.webp" alt="" id="buffer-img">
 
     <script src="assets/scripts/get_auth_token.js"></script>

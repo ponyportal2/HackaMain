@@ -65,8 +65,15 @@ def sql_token_to_user(token):
     except Exception as e:
         print("Failed to cum", e)
 
-def sql_change_image_location(filename_from, filename_to):
-    sql(f"update pictures set path = '{filename_to}' where path = '{filename_from}'")
+def sql_token_to_user_id(token):
+    try:
+        id = sql(f"select user_id from session where token = '{token}'").scalar()
+        return id
+    except Exception as e:
+        print("Failed to cum 2", e)
+
+def sql_change_image_location(user_id, filename_from, filename_to):
+    sql(f"update pictures set path = '{filename_to}' where path = '{filename_from}' and user_id = '{user_id}'")
 
 ###
 def sql_does_image_exist(path):
