@@ -42,6 +42,7 @@ def sql_set_user_auth_status(username, status):
     
 
 def sql_get_all_user_pictures_with_pattern(username, pattern):
+    pattern = str(pattern)
     parsed = pattern.replace('*', '%')
     result = sql(f"select p.path from pictures p join users u on (p.user_id = u.id) where u.name = '{username}' and p.path like '{parsed}'").fetchall()
     return result
