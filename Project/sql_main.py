@@ -23,17 +23,18 @@ def main_sql_func():
     # add a query in there to create a table for the data
     list_create = [create_query, create_query2, create_query3, create_query4]
     list_index = [index1, index2]
-    #dml
-    #tests
-    delete = "DROP TABLE users"
-    delete2 = "DROP TABLE pictures"
-    try: 
+    try:
         select_table(select)
+        print("Database exisits")
     except Exception as e:
+        print(f"Err: database not found, Creating new...\n Discript error: {e}")
         sql_execute_list(list_create)
         sql_execute_list(list_index)
         
-    #insert_tables(1000)
+    #insert_tables(10)
+    #
+    #print("BASE:")
+    #print_table('users')
     #print(sql_username_exists('John'))
     #print(sql_username_exists('LL'))
     #print(sql_username_exists('Psychokid'))
@@ -52,8 +53,6 @@ def main_sql_func():
     #sql_delete_token('XXXvideos')
     #insert_tables(5)
     #print_table('users')
-
-    #print(sql_get_all_user_album_names('John'))
 
     #tests
     #select_all(select, select2)
@@ -82,13 +81,8 @@ def insert_tables(end_range):
         
 
 def select_table(select):
-    result = conn.execute(text(select)).scalar()
+    result = conn.execute(text(select)).fetchall()
     print(result)
     return result
-
-def drop_tables(delete, delete2):
-    conn.execute(text(delete))
-    conn.execute(text(delete2))
-
 
 main_sql_func()

@@ -2,6 +2,16 @@ from sqlalchemy import text
 from sql_connection import conn
 import random
 
+
+def commit_changes(func):
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        conn.commit()
+        return result
+        # print("Commit")
+    return wrapper
+
+@commit_changes
 def sql(string):
     return conn.execute(text(string))
 
@@ -83,3 +93,4 @@ def print_table(table_name):
     avatar
     '''
     print( sql(f"select * from {table_name}").fetchall())
+    print("Len:",len(sql(f"select * from {table_name}").fetchall()))
