@@ -57,7 +57,7 @@ function load_user_files() {
             console.log('GOT USER FILES: ', data);
             data.returned.forEach(name => {
                 console.log('User image: ', name);
-                let html = `<div class="file image bg-load-assist" onclick="open_image('/${name}');" style="background-image: url(/api/images/${name});"><div class="content"><p class="filename">${name}</p></div></div>`;
+                let html = `<div class="file image bg-load-assist" onclick="open_image(this);" style="background-image: url(/api/images/${name});"><div class="content"><p class="filename">${name}</p></div></div>`;
 
                 console.log(`HTML: ${html}`);
                 files_elem.appendChild(createElementFromHTML(html));

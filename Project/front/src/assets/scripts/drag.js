@@ -40,16 +40,16 @@ function close_image_zoom() {
     elem.classList.add('closed');
 }
 
-function open_image(img_name) {
+function open_image(elem) {
     
-    const elem = document.getElementById("zoom-popup");
-    elem.classList.remove('closed');
+    // const elem = document.getElementById("zoom-popup");
+    // elem.classList.remove('closed');
     
     const bgelem = document.getElementById("zoom-popup-image");
-    let url = `assets/images/fileimg/${img_name}`;
+    // let url = `assets/images/fileimg/${img_name}`;
     update_zoom_pos(0.0, 0.0, 0.0)
-    bgelem.src = url;
-    let size = get_img_size(url);
+    bgelem.src = elem.style.backgroundImage.slice(5, -2);
+    let size = [bgelem.width, bgelem.height];
     zoom_state.img_w = size[0];
     zoom_state.img_h = size[1];
 
