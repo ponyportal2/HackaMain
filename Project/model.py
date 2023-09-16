@@ -162,6 +162,15 @@ def create_folder():
     username = sql_token_to_user(data.get('token'))
     return jsonify({'returned': create_folder(f'users/{username}/{data.get("folder")}')})
 
+@app.route("/api/delete_folder/", methods=["POST"]) # WORKS
+def create_folder():
+    # {token}
+    data = request.json
+    data_error_check(data)
+
+    username = sql_token_to_user(data.get('token'))
+    return jsonify({'returned': create_folder(f'users/{username}/{data.get("folder")}')})
+
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
 def set_avatar_pic():
     # {token, filename}

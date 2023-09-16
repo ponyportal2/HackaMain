@@ -16,3 +16,7 @@ for (let i = 0; i < album_name_els.length; i++) {
     item.innerHTML = global_album_name;
     console.log(item);
 }
+
+function delete_album() {
+    
+}
