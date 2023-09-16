@@ -8,6 +8,7 @@ let global_album_name;
     const urlParams = new URLSearchParams(queryString);
     
     global_album_name = urlParams.get('name');
+    dragdrop_send_prefix = global_album_name + '/';
 })();
 
 for (let i = 0; i < album_name_els.length; i++) {

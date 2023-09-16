@@ -88,6 +88,14 @@ async function get_images_for_album(album) {
     .then(response => response.json());
 }
 
+async function create_folder(name) {
+    return json_request('/api/create_folder/', { 
+        token: get_auth_token(), 
+        folder: name, 
+    })
+    .then(response => response.json());
+}
+
 async function get_folders() {
     return json_request('/api/get_all_folders/', { token: get_auth_token(), pattern: '*' })
     .then(response => response.json());

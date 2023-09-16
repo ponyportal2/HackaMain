@@ -1,5 +1,7 @@
 const files_input = document.getElementById('files_input');
 
+let dragdrop_send_prefix = '';
+
 function dropHandler(ev) {
   console.log("File(s) dropped");
 
@@ -71,7 +73,7 @@ function send_files(ev) {
       let file = files_input.files[i];
       let formData = new FormData();
       formData.append('file', file);
-      formData.append('filename', file.name);
+      formData.append('filename', `${dragdrop_send_prefix}${file.name.split('/').pop()}`);
       formData.append('token', get_auth_token());
 
       fetch(get_server_ip() + '/api/upload_file', {

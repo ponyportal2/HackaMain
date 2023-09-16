@@ -76,7 +76,7 @@
           <div class="pos-12">
             <div class="files albums" id="albums">
               <div class="file album">
-                <div class="content"><div class="plus-icon" onclick="on_album_create();"></div><span class="album-name">New album</span></div>
+                <div class="content"><div class="plus-icon" onclick="open_create_album();"></div><span class="album-name">New album</span></div>
               </div>
             </div>
           </div>
@@ -204,29 +204,23 @@
 
 
 
-    <div class="create-album-popup popup closed" id="upload-popup">
-      <div class="drop-area" id="drop-area" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-        <p class="greet_info">Drag&drop one or more files to this <i>drop zone</i></p>
-        <button class="greet_info button" onclick="close_dragdrop();">Close</button>
 
-        <div class="files-form-wrap">
-          <div class="container ">
-            <div class="row">
-              <div class="pos-12">
-                <form class="files-form" id="files-form" onsubmit="send_files(event)">
-                  <button onclick="close_dragdrop(); event.preventDefault()">Cancel</button>
 
-                  <h2 style="margin-bottom: 2rem;">Your files:</h2>
-                  <input type="file" class="file_input" id="files_input" multiple accept="image/*" onchange="handleFiles(this.files)">
-                  <label for="files_input" class="l-button">Pick files...</label>
+    <div class="create-album-popup popup closed" id="create-album-popup">
 
-                  <input type="submit" value="Upload...">
+      <div class="def-form-wrapper">
+        
+            <div class="pos-6">
+              <form class="def-form" id="create-album-form" onsubmit="create_album(event)">
+                <button onclick="close_create_album(); event.preventDefault()">Cancel</button>
 
-                </form>
-              </div>
+                <h2 style="margin-bottom: 2rem;">Album Name:</h2>
+                <input type="text" id="create-album-name" placeholder="Album name">
+
+                <input type="submit" value="Create">
+
+              </form>
             </div>
-          </div>
-        </div>
       </div>
     </div>
 

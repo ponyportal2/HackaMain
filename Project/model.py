@@ -153,6 +153,15 @@ def get_all_folders():
     username = sql_token_to_user(data.get('token'))
     return jsonify({'returned': list_folders_in_directory(f'users/{username}')})
 
+@app.route("/api/create_folder/", methods=["POST"]) # WORKS
+def create_folder():
+    # {token}
+    data = request.json
+    data_error_check(data)
+
+    username = sql_token_to_user(data.get('token'))
+    return jsonify({'returned': create_folder(f'users/{username}/{data.get("folder")}')})
+
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
 def set_avatar_pic():
     # {token, filename}
@@ -279,6 +288,9 @@ def list_folders_in_directory(directory_path):
     except OSError as e:
         print(f"Error: {e}")
         return []
+
+def create_folder(directory): 
+    os.makedirs(directory, exist_ok=True)
 
 def data_error_check(data):
     data = request.get_json()

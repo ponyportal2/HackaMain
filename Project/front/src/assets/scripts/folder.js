@@ -3,5 +3,30 @@ function open_album(name) {
 }
 
 function on_album_create() {
-    location.assign(`/static/app/album.html?name=123`);
+    create_folder('hello')
+}
+
+function open_create_album() {
+  document.getElementById('create-album-popup')
+  .classList.remove('closed');
+}
+
+function close_create_album() {
+  document.getElementById('create-album-popup')
+  .classList.add('closed');
+}
+
+
+function create_album(event) {
+    event.preventDefault();
+    let folder_name = document.getElementById('create-album-name').value.toString();
+
+    console.log(folder_name.search('\\\/'), folder_name.search('\\\*'), folder_name.search('\\\:'), folder_name.search('\\\;'));
+    if (folder_name.search('\\\/') >= 0 || folder_name.search('\\\*') >= 0 || folder_name.search('\\\:') >= 0 || folder_name.search('\\\;') >= 0) {
+        alert('Invalid name');
+        return;
+    }
+
+    create_folder(folder_name);
+    location.reload();
 }
