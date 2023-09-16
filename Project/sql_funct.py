@@ -7,12 +7,12 @@ def sql(string):
 
 def sql_token_exists_in_db(token):
     result = sql(f"select EXISTS(select token from session where token = '{token}')").scalar()
-    return int(result)# ok, 10/10 very good
+    return int(result)
 
 
 def sql_username_exists(username):
     result = sql(f"select EXISTS(select name from users where name = '{username}')").scalar()
-    return int(result)# ok, 10/10 very good
+    return int(result) # ok, 10/10 very good
 
 def sql_get_user_password_hash(username):
     result = sql(f"select password from users where name = '{username}'").scalar()
@@ -68,6 +68,11 @@ def sql_get_avatar(username):
 
 def sql_delete_token(token):
     sql(f"delete from session where token = '{token}'")
+
+
+def sql_get_user_auth_status(username):
+    result = sql(f"select accepted_status from users where name = '{username}'")
+    return result
 
 def print_table(table_name):
     '''
