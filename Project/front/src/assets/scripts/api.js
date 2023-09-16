@@ -96,7 +96,20 @@ async function create_folder(name) {
     .then(response => response.json());
 }
 
+async function delete_folder(name) {
+    return json_request('/api/delete_folder/', { 
+        token: get_auth_token(), 
+        folder: name, 
+    })
+    .then(response => response.json());
+}
+
 async function get_folders() {
     return json_request('/api/get_all_folders/', { token: get_auth_token(), pattern: '*' })
+    .then(response => response.json());
+}
+
+async function delete_file(file) {
+    return json_request('/api/del_file/', { token: get_auth_token(), filename: file })
     .then(response => response.json());
 }

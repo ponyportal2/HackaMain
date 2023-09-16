@@ -17,6 +17,7 @@ for (let i = 0; i < album_name_els.length; i++) {
     console.log(item);
 }
 
-function delete_album() {
-    
+function trigger_delete_album() {
+    delete_folder(global_album_name);
+    location.assign(`/static/app/index.html`);
 }

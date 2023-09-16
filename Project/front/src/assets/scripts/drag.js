@@ -11,6 +11,7 @@ var zoom_state = {
     y: 0,
     img_w: 0,
     img_h: 0,
+    src: '',
 };
 
 function update_zoom_pos(zoom_in, x, y) {
@@ -56,6 +57,8 @@ function open_image(elem) {
     zoom_state.img_w = size[0];
     zoom_state.img_h = size[1];
 
+    zoom_state.src = elem.dataset.src;
+
     update_zoom_pos(0.0, 0.0, 0.0)
 }
 
@@ -83,5 +86,9 @@ zoom_drag.onmousedown = function(event) {
       zoom_drag.onmouseup = null;
     };
   
-  };
-  
+};
+
+function delete_image_zoom() {
+    // zoom_state.src.slice('/api/images/'.length)
+    delete_file(zoom_state.src.slice('/api/images/'.length));
+}

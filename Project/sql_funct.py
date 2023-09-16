@@ -80,8 +80,8 @@ def sql_does_image_exist(path):
     result = sql(f"select EXISTS(select path from pictures where path = '{path}')")
     return result
 
-def sql_remove_image_location(filename):
-    sql(f"delete from pictures where path = '{filename}'")
+def sql_remove_image_location(user_id, filename):
+    sql(f"delete from pictures where path = '{filename}' and user_id = '{user_id}'")
 
 def sql_change_avatar(username, filename):
     id_user = sql(f"select id from users where name = '{username}'").scalar()

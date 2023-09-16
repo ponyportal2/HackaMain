@@ -125,9 +125,14 @@ def del_file():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
+    user_id = sql_token_to_user_id(data.get('token'))
     file_name = f'users/{username}/{data.get("filename")}'
-    os.remove(file_name)
-    sql_remove_image_location(file_name)
+    try:
+        os.remove(file_name)
+    except Exception as e:
+        pass
+
+    sql_remove_image_location(user_id, f'{data.get("filename")}')
     return jsonify({'status': 'success'}), 200
 
 @app.route("/api/get_all_files/", methods=["POST"]) # WORKS
@@ -154,7 +159,7 @@ def get_all_folders():
     return jsonify({'returned': list_folders_in_directory(f'users/{username}')})
 
 @app.route("/api/create_folder/", methods=["POST"]) # WORKS
-def create_folder():
+def create_folder_req():
     # {token}
     data = request.json
     data_error_check(data)
@@ -163,13 +168,13 @@ def create_folder():
     return jsonify({'returned': create_folder(f'users/{username}/{data.get("folder")}')})
 
 @app.route("/api/delete_folder/", methods=["POST"]) # WORKS
-def create_folder():
+def delete_folder_req():
     # {token}
     data = request.json
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
-    return jsonify({'returned': create_folder(f'users/{username}/{data.get("folder")}')})
+    return jsonify({'returned': delete_folder(f'users/{username}/{data.get("folder")}')})
 
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
 def set_avatar_pic():
@@ -300,6 +305,9 @@ def list_folders_in_directory(directory_path):
 
 def create_folder(directory): 
     os.makedirs(directory, exist_ok=True)
+
+def delete_folder(directory): 
+    os.rmdir(directory)
 
 def data_error_check(data):
     data = request.get_json()
