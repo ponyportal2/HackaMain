@@ -1,4 +1,4 @@
-# Leading branch: release_1_1
+# Leading branch: develop
 
 Have all the minimum basic features, except roles.
-Can be build for web and for electron.
+Can be built for web and for electron.
