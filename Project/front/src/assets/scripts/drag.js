@@ -49,17 +49,29 @@ function open_image(elem) {
     const bgelem = document.getElementById("zoom-popup-image");
     // let url = `assets/images/fileimg/${img_name}`;
     update_zoom_pos(0.0, 0.0, 0.0)
-    bgelem.src = elem.style.backgroundImage.slice(5, -2);
-    bgelem.style = null;
-    console.log('test ', bgelem.width, bgelem.height);
-    console.log(bgelem);
-    let size = [bgelem.width, bgelem.height];
-    zoom_state.img_w = size[0];
-    zoom_state.img_h = size[1];
+    let url = elem.dataset.src;
+    
+    console.log('url: ', elem.dataset.src);
+    if (url.startsWith('/api/thumbs'))
+        url = url.slice('/api/thumbs'.length)
+    
+    bgelem.dataset.src = '/api/images' + encodeURIComponent(url);
+    bgelem.classList.add('img-load-assist');
+    load_images()
+        .then(() => setTimeout(() => {
+            console.log('hello');
+            bgelem.style = null;
+            console.log('test ', bgelem.width, bgelem.height);
+            console.log(bgelem);
+            let size = [bgelem.width, bgelem.height];
+            zoom_state.img_w = size[0];
+            zoom_state.img_h = size[1];
+        
+            zoom_state.src = elem.dataset.src;
+        
+            update_zoom_pos(0.0, 0.0, 0.0)
+        }, 200))
 
-    zoom_state.src = elem.dataset.src;
-
-    update_zoom_pos(0.0, 0.0, 0.0)
 }
 
 let zoom_drag = document.getElementById('zoom-popup-drag');

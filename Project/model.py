@@ -14,6 +14,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import  FileStorage
 
+from thumb_gen import *
 from sql_funct import *
 
 import shutil
@@ -121,6 +122,8 @@ def upload_file():
         sql_post_image_location(username, f'{request.form["filename"]}')
 
         send_to_backuper(file, file_path)
+        if not is_video_file(request.form['filename']):
+            create_thumb(file_path)
 
         return jsonify({'status': 'success'}), 200
 
@@ -275,6 +278,27 @@ def get_image(kartinka):
     else:
         return jsonify({'status': 'no_token_found'}), 400 # No file part
 
+@app.route("/api/thumbs/<path:kartinka>", methods=["GET"])
+@cross_origin()
+def get_thumb(kartinka):
+    token = ""
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        token = auth_header.split("Bearer ")[1]
+
+    if sql_token_exists_in_db(token) == True:
+        user = sql_token_to_user(token)
+        if sql_does_image_exist(f'{user}/{kartinka}'):
+            image_path = os.path.join(f'thumb/users/{user}/{kartinka}')
+            if not os.path.exists(image_path):
+                return jsonify({'status': 'error'}), 400 # No such file
+
+            return send_file(image_path, mimetype='image/jpeg')
+        else: 
+            return jsonify({'status': 'invalid_token'}), 400 # No file part
+    else:
+        return jsonify({'status': 'no_token_found'}), 400 # No file part
+
 # AUTH
 appConf = {
     "OAUTH2_CLIENT_ID": "116203304654-fp8noi61ff6kdo5gnu40b7d41nbojn6b.apps.googleusercontent.com",
@@ -331,7 +355,12 @@ def logauth():
 # Functions:
 
 def allowed_file(filename): 
-    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'bmp', 'mp4'}
+    ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'bmp', 'mp4', 'avi', 'mov', 'mkv'}
+    file_extension = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+    return '.' in filename and file_extension in ALLOWED_EXTENSIONS
+
+def is_video_file(filename): 
+    ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv'}
     file_extension = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
     return '.' in filename and file_extension in ALLOWED_EXTENSIONS
 

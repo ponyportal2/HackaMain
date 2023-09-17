@@ -34,6 +34,7 @@ function load_images() {
         promises += get_request(get_server_ip() + el.dataset.src)
             .then(responce => responce.blob())
             .then(images => {
+                el.classList.remove('img-load-assist');
                 let outside = URL.createObjectURL(images);
                 el.src = outside;
             });
@@ -62,7 +63,7 @@ function load_user_files(album) {
             const files_elem = document.getElementById("files");
             console.log('GOT USER FILES: ', data);
             data.returned.forEach(name => {
-                let html = `<div class="file image bg-load-assist" onclick="open_image(this);" data-src="/api/images/${name}"><div class="content"><p class="filename">${name}</p></div></div>`;
+                let html = `<div class="file image bg-load-assist" onclick="open_image(this);" data-src="/api/thumbs/${name}"><div class="content"><p class="filename">${name}</p></div></div>`;
 
                 files_elem.appendChild(createElementFromHTML(html));
             });
