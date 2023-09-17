@@ -465,14 +465,14 @@ def logauth():
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png',
-                          'webp', 'bmp', 'mp4', 'avi', 'mov', 'mkv'}
+                          'webp', 'bmp', 'mp4', 'avi', 'mov', 'mkv', 'gif'}
     file_extension = filename.rsplit(
         '.', 1)[1].lower() if '.' in filename else ''
     return '.' in filename and file_extension in ALLOWED_EXTENSIONS
 
 
 def is_video_file(filename):
-    ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv'}
+    ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov', 'mkv', 'gif'}
     file_extension = filename.rsplit(
         '.', 1)[1].lower() if '.' in filename else ''
     return '.' in filename and file_extension in ALLOWED_EXTENSIONS
