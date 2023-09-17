@@ -7,7 +7,7 @@ function createWindow() {
         height: 600,
         webPreferences: { preload: path.join(__dirname, 'preload.js') }
     })
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
     win.loadFile('dist/static/app/index.html')
 }
 

@@ -1,5 +1,8 @@
 PY = python3
 RM = rm -rf
+MKDIR = mkdir -p
+CP = cp -rf
+
 all: run
 check:
 	${PY} setup.py
@@ -18,3 +21,13 @@ clean:
 
 delete_base:
 	${RM} metanit.db
+
+front/node_modules: front/package.json
+	cd front && npm install
+
+web_client: front/node_modules front/src/*
+	cd front && gulp run_once
+	
+electron_client: front/node_modules front/src/*
+	cd front && gulp run_once_here
+	cd front && npm run make
