@@ -118,3 +118,9 @@ async function delete_file(file) {
     return json_request('/api/del_file/', { token: get_auth_token(), filename: file })
     .then(response => response.json());
 }
+
+
+async function api_request_telegram_code() {
+    return json_request('/api/get_auth_key/', { token: get_auth_token() })
+    .then(response => response.json());
+}

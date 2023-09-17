@@ -47,6 +47,9 @@
 
               <div class="dropdown-menu closing closed" id="user-dropdown">
                 <!-- <a href="#" class="btn-link pick-image">Change profile picture</a> -->
+                <p>Account role: Guest</p>
+                <p>To elevate the role - verify your account:</p>
+                <a href="#" id="telegram_auth" class="btn-link telegram" onclick="telegram_popup_open(); event.preventDefault();">Verify account via telegram</a>
                 <a href="#" class="btn-link logout" onclick="trigger_logout(event)">Log out</a>
               </div>
             </div>
@@ -232,6 +235,30 @@
 
 
 
+    <div class="telegram-auth-popup popup" id="telegram-auth-popup">
+      <div class="def-form-wrapper">
+            <div class="pos-6">
+              <form class="def-form" id="telegram-auth-form">
+                <button onclick="telegram_popup_close(); event.preventDefault()">Cancel</button>
+
+                <p>
+                  You can request verification code. In order to verify you will have to send it to <a href="https://t.me/@HackAuth_bot" style="color: #3af;">@HackAuth_bot</a>. Your telegram username must match with your username.
+                </p>
+
+                <button onclick="telegram_request_code(); event.preventDefault()">Request verification code</button>
+
+                <p style="user-select: all;" id="telegram-code-placeholder">_ _ _ _ _ _</p>
+              </form>
+            </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
 
 
     
@@ -257,6 +284,7 @@
     <script src="assets/scripts/folder.js"></script>
     <script src="assets/scripts/dragdrop.js"></script>
     <script src="assets/scripts/main_server_interaction.js"></script>
+    <script src="assets/scripts/telegram_auth.js"></script>
     <script type="module">mservi_init()</script>
 
   </body>
