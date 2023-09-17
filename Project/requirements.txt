@@ -6,4 +6,5 @@ jsonify
 authlib
 pillow
 jwt
-shutil
+requests
+flask-cors

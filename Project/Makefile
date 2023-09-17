@@ -8,7 +8,7 @@ check:
 	${PY} setup.py
 
 req:
-	pip3 install -r requirements.txt
+	${PY} -m pip install -r requirements.txt
 
 run:
 	${PY} model.py

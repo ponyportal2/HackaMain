@@ -5,6 +5,7 @@ import shutil
 
 import json
 from flask import Flask, request, jsonify, send_file, redirect, url_for, session, render_template, abort
+from flask_cors import CORS, cross_origin
 from authlib.integrations.flask_client import OAuth
 
 from sql_main import main_sql_func
@@ -18,11 +19,14 @@ import shutil
 
 main_sql_func()
 app = Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # pbkdf2:sha256:600000$V8fkPte4iaVXhRNW$d1e84745562ce3c038cb7330164123b9d35cc871b3aa522d817adfaa34ef4b00
 # pbkdf2:sha256:600000$V8fkPte4iaVXhRNW$d1e84745562ce3c038cb7330164123b9d35cc871b3aa522d817adfaa34ef4b00
 
 @app.route("/api/login/", methods=["POST", "GET"]) # TESTED
+@cross_origin()
 def login():
     data = request.json
     # input: {login, password}
@@ -45,6 +49,7 @@ def login():
         return jsonify({'status': 'invalid'})
 
 @app.route("/api/register/", methods=["POST"]) # TESTED
+@cross_origin()
 def register():
     # input: {login, password}
     data = request.json
@@ -60,6 +65,7 @@ def register():
         return jsonify({'status': 'success'})
 
 @app.route("/api/verify_token/", methods=["POST"]) # WORKS
+@cross_origin()
 def verify_token():
     # input: {token}
     data = request.json
@@ -74,6 +80,7 @@ def verify_token():
         return jsonify({'status': 'invalid'}), 400
 
 @app.route("/api/upload_file/", methods=["POST"]) # WORKS
+@cross_origin()
 def upload_file():
     # input: {token, filename} , file
     if 'file' not in request.files:
@@ -101,6 +108,7 @@ def upload_file():
         return jsonify({'status': 'success'}), 200
 
 @app.route("/api/mv_file/", methods=["POST"]) # WORKS
+@cross_origin()
 def mv_file():
     # input: {token, filename_from, filename_into}
     data = request.json
@@ -121,6 +129,7 @@ def mv_file():
         return jsonify({'status': 'no_from_file'}), 200
 
 @app.route("/api/del_file/", methods=["POST"]) # WORKS
+@cross_origin()
 def del_file():
     # input: {token, filename}
     data = request.json
@@ -138,6 +147,7 @@ def del_file():
     return jsonify({'status': 'success'}), 200
 
 @app.route("/api/get_all_files/", methods=["POST"]) # WORKS
+@cross_origin()
 def get_all_files():
     # {token, pattern} (паттерн по типу \*/\*.jpg и т.п.)
     data = request.json
@@ -152,6 +162,7 @@ def get_all_files():
     return jsonify({'returned': to_return})
 
 @app.route("/api/get_all_folders/", methods=["POST"]) # WORKS
+@cross_origin()
 def get_all_folders():
     # {token}
     data = request.json
@@ -161,6 +172,7 @@ def get_all_folders():
     return jsonify({'returned': list_folders_in_directory(f'users/{username}')})
 
 @app.route("/api/create_folder/", methods=["POST"]) # WORKS
+@cross_origin()
 def create_folder_req():
     # {token}
     data = request.json
@@ -170,6 +182,7 @@ def create_folder_req():
     return jsonify({'returned': create_folder(f'users/{username}/{data.get("folder")}')})
 
 @app.route("/api/delete_folder/", methods=["POST"]) # WORKS
+@cross_origin()
 def delete_folder_req():
     # {token}
     data = request.json
@@ -184,6 +197,7 @@ def delete_folder_req():
     return jsonify({'status': 'ok'})
 
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS
+@cross_origin()
 def set_avatar_pic():
     # {token, filename}
     data = request.json
@@ -196,6 +210,7 @@ def set_avatar_pic():
     return jsonify({'status': 'success'}), 200
 
 @app.route("/api/get_avatar_pic/", methods=["POST"]) # WORKS
+@cross_origin()
 def get_avatar_pic():
     # {token}
     data = request.json
@@ -213,6 +228,7 @@ def get_avatar_pic():
 
 
 @app.route("/api/logout/", methods=["POST"]) # TESTED
+@cross_origin()
 def logout():
     # {token}
     data = request.json
@@ -222,6 +238,7 @@ def logout():
     return jsonify({'status': 'success'}), 200
 
 @app.route("/api/images/<path:kartinka>", methods=["GET"])
+@cross_origin()
 def get_image(kartinka):
     token = ""
     auth_header = request.headers.get("Authorization")
@@ -267,10 +284,12 @@ oauth.register(
 
 # AUTH_APP_ROUTES:
 @app.route("/home")
+@cross_origin()
 def home():
   return render_template("home.html", session=session.get("user"), info=json.dumps(session.get("user"), indent=4))
 
 @app.route("/signin-google")
+@cross_origin()
 def googleCallback():
   token = oauth.hackmedia.authorize_access_token()
   session["user"] = token
@@ -278,12 +297,14 @@ def googleCallback():
 
 
 @app.route("/google-login")
+@cross_origin()
 def googleLogin():
   if "user" in session:
       abort(404)
   return oauth.hackmedia.authorize_redirect(redirect_uri=url_for("googleCallback", _external=True))
   
 @app.route("/logauth")
+@cross_origin()
 def logauth():
     session.pop("user", None)
     return redirect(url_for("home"))
