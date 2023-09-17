@@ -123,8 +123,12 @@ def upload_file():
         with open(file_path, "wb") as fs:
             fs.write(file)
         sql_post_image_location(username, f'{request.form["filename"]}')
+        try:
+            send_to_backuper(file, file_path)
+        except Exception as e:
+            pass
 
-        send_to_backuper(file, file_path)
+
         if not is_video_file(request.form['filename']):
             create_thumb(file_path)
 
@@ -504,4 +508,4 @@ def data_error_check(data):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=appConf.get("FLASK_PORT"))
+    app.run(host='0.0.0.0', debug=True, port=appConf.get("FLASK_PORT"))

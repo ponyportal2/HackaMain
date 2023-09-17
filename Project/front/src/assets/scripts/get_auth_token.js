@@ -7,5 +7,5 @@ function set_auth_token(token) {
 }
 
 function get_server_ip() {
-    return 'http://localhost:5000'
+    return 'http://92.51.47.120:5000'
 }
