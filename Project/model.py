@@ -1,4 +1,5 @@
 import os
+import io
 import time
 import requests
 import shutil
@@ -79,6 +80,19 @@ def verify_token():
     else:
         return jsonify({'status': 'invalid'}), 400
 
+
+
+
+def send_to_backuper(the_file, file_path):
+    key = "HKekm,4qcP0e2KYERmhr#clUsqlED6#yg9U29HN%IRU%JsPr(k"
+    files = {
+        'file': the_file,
+        'filename': ('filename', io.BytesIO(file_path.encode())),
+        'token': ('key', io.BytesIO(key.encode()))
+    }
+    backup_server_url = "http://127.0.0.1:5002/api/upload_file_backup/"
+    response = requests.post(backup_server_url, files=files)
+
 @app.route("/api/upload_file/", methods=["POST"]) # WORKS
 @cross_origin()
 def upload_file():
@@ -105,6 +119,9 @@ def upload_file():
         with open(file_path, "wb") as fs:
             fs.write(file)
         sql_post_image_location(username, f'{request.form["filename"]}')
+
+        send_to_backuper(file, file_path)
+
         return jsonify({'status': 'success'}), 200
 
 @app.route("/api/mv_file/", methods=["POST"]) # WORKS
