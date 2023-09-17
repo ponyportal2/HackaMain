@@ -176,7 +176,11 @@ def delete_folder_req():
     data_error_check(data)
 
     username = sql_token_to_user(data.get('token'))
+    user_id = sql_token_to_user_id(data.get('token'))
     delete_folder(f'users/{username}/{data.get("folder")}')
+    # print_table('pictures')
+    print("REMOVING WHERE ", user_id, data.get("folder"))
+    sql_remove_image_by_pattern(user_id, f'{data.get("folder")}/%')
     return jsonify({'status': 'ok'})
 
 @app.route("/api/set_avatar_pic/", methods=["POST"]) # WORKS

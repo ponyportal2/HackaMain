@@ -83,6 +83,9 @@ def sql_does_image_exist(path):
 def sql_remove_image_location(user_id, filename):
     sql(f"delete from pictures where path = '{filename}' and user_id = '{user_id}'")
 
+def sql_remove_image_by_pattern(user_id, pat):
+    sql(f"delete from pictures where path like '{pat}' and user_id = '{user_id}'")
+
 def sql_change_avatar(username, filename):
     id_user = sql(f"select id from users where name = '{username}'").scalar()
     sql(f"update avatar set ava_path = '{filename}' where user_id = {id_user}")

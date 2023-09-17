@@ -31,7 +31,7 @@ function load_images() {
     let elems = document.getElementsByClassName('img-load-assist');
     for (let i = 0; i < elems.length; i++) {
         let el = elems[i];
-        promises += get_request(el.dataset.src)
+        promises += get_request(get_server_ip() + el.dataset.src)
             .then(responce => responce.blob())
             .then(images => {
                 let outside = URL.createObjectURL(images);
@@ -42,7 +42,7 @@ function load_images() {
     let bg_elems = document.getElementsByClassName('bg-load-assist');
     for (let i = 0; i < bg_elems.length; i++) {
         let el = bg_elems[i];
-        promises += get_request(el.dataset.src)
+        promises += get_request(get_server_ip() + el.dataset.src)
             .then(responce => responce.blob())
             .then(images => {
                 let outside = URL.createObjectURL(images);

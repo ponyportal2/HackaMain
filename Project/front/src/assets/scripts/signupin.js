@@ -10,7 +10,7 @@ function trigger_signup(event) {
                 sign_in(login, password)
                     .then(result => {
                         set_auth_token(result.token);
-                        location.assign(`${PREFIX}/index.html`);
+                        location.assign(`index.html`);
                     });
             } else {
                 alert('Failed to sign up!');
@@ -27,7 +27,7 @@ function trigger_signin(event) {
     .then(result => {
         if (result.token) {
             set_auth_token(result.token);
-            location.assign(`${PREFIX}/index.html`);
+            location.assign(`index.html`);
         } else {
             alert('Failed to sign in!');
         }

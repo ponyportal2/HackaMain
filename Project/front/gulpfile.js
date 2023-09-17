@@ -6,7 +6,7 @@ const browser_sync = require('browser-sync').create();
 
 const { files_map } = require('./gulp_tasks/tasks');
 
-const config = {
+let config = {
     from: 'src/',
     to: '../static/app/',
 };
@@ -160,4 +160,63 @@ function watchTask() {
     });
 }
 
+const no_bs_tasks = require('./gulp_tasks/tasks_no_bs');
+
+
+function fileChangedNoBs(filename) {
+    filename = sanitize_path(filename);
+    const extension = file_extension(filename);
+
+    if (extension == 'pdnSave') {
+        return;
+    }
+
+    const tuple = no_bs_tasks.files_map[extension];
+    let final_name = get_dist_filepath(filename);
+
+    let update = false;
+    if (file_exists(final_name))
+        update = get_last_modified_time(filename) > get_last_modified_time(final_name);
+    else
+        update = true;
+
+    if (!update)
+        return;
+
+    console.log(`Updating ${filename} -> ${final_name}`);
+    if (tuple === undefined) {
+        src(filename)
+            .pipe(dest(path.dirname(final_name)))
+    } else {
+        const [end_extension, callback] = tuple;
+        callback(filename, final_name);
+    }
+}
+
+function run_once() {
+    let src_path = `${config.from}**/*.*`;
+    let all_files = get_all_files(config.from);
+    let reachable_files = all_files.map(file => get_dist_filepath(file));
+
+    let dist_files = get_all_files(config.to);
+    for (let i = 0; i < dist_files.length; i++) {
+        if (!reachable_files.includes(dist_files[i])) {
+            try {
+                fs.unlinkSync(dist_files[i]);
+            } catch (err) {}
+        }
+    }
+
+    all_files.forEach(file => fileChangedNoBs(file));
+
+    return new Promise((resolve, reject) => resolve());
+}
+function run_once_here() {
+    config.to = 'dist/static/app/';
+    return run_once();
+}
+
+
 exports.default = series(watchTask);
+exports.run_once = series(run_once);
+exports.run_once_here = series(run_once_here);
