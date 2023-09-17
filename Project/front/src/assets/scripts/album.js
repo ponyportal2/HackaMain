@@ -18,6 +18,6 @@ for (let i = 0; i < album_name_els.length; i++) {
 }
 
 function trigger_delete_album() {
-    delete_folder(global_album_name);
-    location.assign(`/static/app/index.html`);
+    delete_folder(global_album_name)
+    .then(() => location.assign(`/static/app/index.html`));
 }

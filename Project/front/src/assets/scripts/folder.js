@@ -27,6 +27,6 @@ function create_album(event) {
         return;
     }
 
-    create_folder(folder_name);
-    location.reload();
+    create_folder(folder_name)
+    .then(() => location.reload());
 }

@@ -65,9 +65,12 @@ function clearInputFile(f){
 function send_files(ev) {
   ev.preventDefault();
   console.log('Sending', ev);
+  let promises = [];
 
-  document.getElementById('drop-area').classList.add('loading');
+  // document.getElementById('drop-area').classList.add('loading');
 
+  let popup = document.getElementById('upload-popup');
+  popup.classList.add('loading');
   for (let i = 0; i < files_input.files.length; i++) {
       console.log("Send: ", files_input.files[i].name);
       let file = files_input.files[i];
@@ -76,20 +79,27 @@ function send_files(ev) {
       formData.append('filename', `${dragdrop_send_prefix}${file.name.split('/').pop()}`);
       formData.append('token', get_auth_token());
 
-      fetch(get_server_ip() + '/api/upload_file', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + get_auth_token() },
-          body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status != 'success')
-          alert(`Failed to load file: ${file.name}`);
-        console.log(data);
-      });
+      promises += fetch(get_server_ip() + '/api/upload_file', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + get_auth_token() },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status != 'success')
+                alert(`Failed to load file: ${file.name}`);
+              console.log('Promise ', i, 'done', data);
+            });
   }
 
-  close_dragdrop();
+  console.log('Total promises: ', promises.length);
+  Promise.all(promises).then(() => {
+    console.log('All promises done!');
+    close_dragdrop();
+      
+    popup.classList.remove('loading'); 
+    console.log('Removed ', popup.classList); 
+  });
 }
 
 function open_dragdrop() {

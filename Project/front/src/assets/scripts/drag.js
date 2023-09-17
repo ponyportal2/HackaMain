@@ -102,11 +102,11 @@ zoom_drag.onmousedown = function(event) {
 
 function delete_image_zoom() {
     // zoom_state.src.slice('/api/images/'.length)
-    delete_file(zoom_state.src.slice('/api/images/'.length));
-    location.reload();
+    delete_file(zoom_state.src.slice('/api/images/'.length))
+    .then(() => location.reload());
 }
 
 function trigger_set_avatar() {
     set_avatar(zoom_state.src.slice('/api/images/'.length))
-    location.reload();
+    .then(() => location.reload());
 }
